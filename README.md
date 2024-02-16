@@ -45,12 +45,10 @@ npm run dev
 - [Vite](https://vitejs.dev/)
 - [Immer](https://immerjs.github.io/immer/)
 - [react-markdown](https://github.com/remarkjs/react-markdown)
-- react-burger-menu
-- react-responsive
 
 ## Update Log
 
-### DATE
+### 16th February 2024
 
 Project first released onto GitHub. :tada:
 
