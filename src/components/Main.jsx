@@ -14,7 +14,7 @@ import "../styles/main.css";
 
 const Main = () => {
   // Uncomment line below to reset local storage for this app.
-  localStorage.clear()
+  // localStorage.clear()
 
   // Returns the current full date and time.
   //
