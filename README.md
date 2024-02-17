@@ -38,7 +38,7 @@ npm run dev
 
 ## Update Log
 
-### 16th February 2024
+### 17th February 2024
 
 Project first released onto GitHub. :tada:
 
