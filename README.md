@@ -6,6 +6,10 @@
 
 This app is purely front-end, so notes are not saved remotely. Rather, they are stored locally on your browser even after closing it and reopening it (but make sure to save them first!).
 
+![1](https://github.com/SA9102/Markdown-Text-Editor/assets/96877426/60291470-897c-41f5-a82d-59553c2ef642)
+
+![2](https://github.com/SA9102/Markdown-Text-Editor/assets/96877426/150b48cc-95c4-4811-9bad-5f39fbc578dc)
+
 ## :bulb: Info
 
 - Notes are stored on the browser's local storage. This means that they do not expire unless you manually clear the browser's data. And even if you refresh the page, or close the browser and reopen it, your notes will be preserved. (But make sure to save them first).
