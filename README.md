@@ -2,7 +2,7 @@
 
 **Quickly create and edit notes using Markdown, and have them locally stored on your browser.**
 
-:boom: [Click here for live demo.]() :boom:
+:boom: [Click here for live demo.](https://sa9102.github.io/Markdown-Text-Editor/) :boom:
 
 This app is purely front-end, so notes are not saved remotely. Rather, they are stored locally on your browser even after closing it and reopening it (but make sure to save them first!).
 
