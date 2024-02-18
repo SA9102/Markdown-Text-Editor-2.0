@@ -39,6 +39,7 @@ npm run dev
 - [Vite](https://vitejs.dev/)
 - [Immer](https://immerjs.github.io/immer/)
 - [react-markdown](https://github.com/remarkjs/react-markdown)
+- [uuid](https://www.npmjs.com/package/uuid)
 
 ## Update Log
 
