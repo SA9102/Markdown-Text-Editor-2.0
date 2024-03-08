@@ -21,17 +21,10 @@ This was just a simple, individual hobby project that I created in order to brus
 
 To quickly get this app running locally on your machine, follow these steps:
 
-1. Clone repository
-2. Move into repository's root directory
-3. Install dependencies
-4. Start up app
-
-```
-git clone https://github.com/SA9102/Markdown-Text-Editor
-cd Markdown-Text-Editor
-npm i
-npm run dev
-```
+1. Clone repository - `git clone https://github.com/SA9102/Markdown-Text-Editor`
+2. Move into repository's root directory - `cd Markdown-Text-Editor`
+3. Install dependencies - `npm i`
+4. Start up app on localhost - `npm run dev`
 
 ## :package: Libraries/frameworks used
 
