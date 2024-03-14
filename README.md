@@ -1,5 +1,7 @@
 # :notebook: Markdown Text Editor
 
+🛠️ ***Currently undergoing some improvement, including a nested folder system to organise your notes, better UI, and more!*** 🛠️
+
 **Quickly create and edit notes using Markdown, and have them locally stored on your browser.**
 
 :boom: [Click here for live demo.](https://sa9102.github.io/Markdown-Text-Editor/) :boom:
