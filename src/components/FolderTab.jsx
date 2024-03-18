@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import FileTab from './FileTab';
 import '../styles/FolderTab.css';
 
 const FolderTab = ({
@@ -12,7 +13,6 @@ const FolderTab = ({
 }) => {
   const [isHover, setIsHover] = useState(false);
   const [newName, setNewName] = useState(folder.name);
-  console.log(folder.isEditing);
   return (
     <>
       <div
@@ -22,7 +22,7 @@ const FolderTab = ({
         onMouseOut={() => setIsHover(false)}
         // onDoubleClick={() => setEditing(true)}
       >
-        {folder.isEditing ? (
+        {folder.isEditingName ? (
           <>
             <input
               type="text"
@@ -44,14 +44,14 @@ const FolderTab = ({
             <p>
               {folder.expand ? (
                 <i
-                  className="fa-solid fa-angle-down"
+                  className="fa-solid fa-caret-down"
                   onClick={() =>
                     onToggleExpand(folder.parentFolderIds, folder.id)
                   }
                 ></i>
               ) : (
                 <i
-                  className="fa-solid fa-angle-right"
+                  className="fa-solid fa-caret-right"
                   onClick={() =>
                     onToggleExpand(folder.parentFolderIds, folder.id)
                   }
@@ -61,11 +61,17 @@ const FolderTab = ({
             </p>
             {isHover && (
               <>
-                <button>
+                <button
+                  onClick={() =>
+                    onAdd(folder.parentFolderIds, folder.id, 'File')
+                  }
+                >
                   <i className="fa-solid fa-file"></i>
                 </button>
                 <button
-                  onClick={() => onAdd(folder.parentFolderIds, folder.id)}
+                  onClick={() =>
+                    onAdd(folder.parentFolderIds, folder.id, 'Folder')
+                  }
                 >
                   <i className="fa-solid fa-folder"></i>
                 </button>
@@ -87,17 +93,30 @@ const FolderTab = ({
         )}
       </div>
       {folder.items.map((item) => {
-        if (item.type === 'Folder' && folder.expand) {
+        if (item.type === 'Folder') {
+          if (folder.expand) {
+            return (
+              <FolderTab
+                key={item.id}
+                folder={item}
+                paddingLeft={paddingLeft + 1}
+                onToggleExpand={onToggleExpand}
+                onUpdate={onUpdate}
+                onToggleEdit={onToggleEdit}
+                onAdd={onAdd}
+                onDelete={onDelete}
+              />
+            );
+          }
+        } else if (item.type === 'File') {
           return (
-            <FolderTab
+            <FileTab
               key={item.id}
-              folder={item}
+              file={item}
               paddingLeft={paddingLeft + 1}
-              onToggleExpand={onToggleExpand}
-              onUpdate={onUpdate}
-              onToggleEdit={onToggleEdit}
-              onAdd={onAdd}
               onDelete={onDelete}
+              onToggleEdit={onToggleEdit}
+              onUpdate={onUpdate}
             />
           );
         }

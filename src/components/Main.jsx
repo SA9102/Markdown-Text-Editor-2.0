@@ -13,46 +13,6 @@ import FoldersAndFilesPanel from './FoldersAndFilesPanel';
 
 import testData from '../testData';
 
-import {
-  toggleExpandFolder,
-  updateFolder,
-  toggleEditFolder,
-  addFolder,
-} from '../utils/dataOperations';
-
-const ACTIONS = {
-  ADD_FOLDER: 'add_folder',
-  UPDATE_FOLDER: 'update_folder',
-  EDIT_FOLDER: 'edit_folder',
-  DELETE_FOLDER: 'delete_folder',
-  TOGGLE_EXPAND_FOLDER: 'toggle_expand_folder',
-};
-
-const dataReducer = (data, action) => {
-  switch (action.type) {
-    case ACTIONS.ADD_FOLDER: {
-      return addFolder(data, 0, action.idChain, action.folderId);
-    }
-
-    case ACTIONS.EDIT_FOLDER: {
-      return toggleEditFolder(data, 0, action.idChain, action.folderId);
-    }
-
-    case ACTIONS.UPDATE_FOLDER: {
-      return updateFolder(
-        data,
-        0,
-        action.idChain,
-        action.folderId,
-        action.newFolderName
-      );
-    }
-
-    case ACTIONS.TOGGLE_EXPAND_FOLDER: {
-      return toggleExpandFolder(data, action.idChain, action.folderId);
-    }
-  }
-};
 const Main = () => {
   // Uncomment line below to reset local storage for this app.
   // localStorage.clear()
@@ -66,51 +26,70 @@ const Main = () => {
     });
   }; // END getCurrentDateAndTime
 
-  if (!localStorage.getItem('notes')) {
-    localStorage.setItem('notes', JSON.stringify(testData));
-  }
+  // if (!localStorage.getItem('notes')) {
+  //   localStorage.setItem('notes', JSON.stringify(testData));
+  // }
 
   // const [data, setData] = useState(JSON.parse(localStorage.getItem('notes')));
   const [data, setData] = useImmer(testData);
-  // const [data, dataDispatch] = useReducer(
-  //   dataReducer,
-  //   // JSON.parse(localStorage.getItem('notes'))
-  //   testData
-  // );
 
-  const handleAddFolder = (idChain, targetFolderId) => {
+  const handleAddItem = (idChain, targetItemId, itemType) => {
     setData((draft) => {
       if (idChain === null) {
-        draft = [
-          {
+        if (itemType === 'Folder') {
+          draft.unshift({
             id: uuidv4(),
             parentFolderIds: [],
             type: 'Folder',
             name: 'Untitled',
             expand: false,
-            isEditing: true,
+            isEditingName: true,
             items: [],
-          },
-          ...draft,
-        ];
+          });
+        } else if (itemType === 'File') {
+          draft.unshift({
+            id: uuidv4(),
+            parentFolderIds: [],
+            type: 'File',
+            name: 'Untitled',
+            body: '',
+            isSelected: false,
+            isEditingName: true,
+          });
+        }
       } else {
         for (let i = 0; i < idChain.length; i++) {
           draft = draft.find((folder) => folder.id === idChain[i]).items;
         }
-        draft = draft.find((folder) => folder.id === targetFolderId);
+        draft = draft.find((folder) => folder.id === targetItemId);
         draft.expand = true;
-        draft.items = [
-          {
-            id: uuidv4(),
-            parentFolderIds: [...idChain, targetFolderId],
-            type: 'Folder',
-            name: 'Untitled',
-            expand: false,
-            isEditing: true,
-            items: [],
-          },
-          ...draft.items,
-        ];
+        if (itemType === 'Folder') {
+          draft.items = [
+            {
+              id: uuidv4(),
+              parentFolderIds: [...idChain, targetItemId],
+              type: 'Folder',
+              name: 'Untitled',
+              expand: false,
+              isEditingName: true,
+              items: [],
+            },
+            ...draft.items,
+          ];
+        } else if (itemType === 'File') {
+          draft.items = [
+            {
+              id: uuidv4(),
+              parentFolderIds: [...idChain, targetItemId],
+              type: 'File',
+              name: 'Untitled',
+              body: '',
+              isSelected: false,
+              isEditingName: true,
+            },
+            ...draft.items,
+          ];
+        }
       }
     });
   };
@@ -131,36 +110,36 @@ const Main = () => {
   // Handles the updating of the folder name, when the user has saved the
   // changes to the new name of the folder.
   //
-  const handleUpdateFolder = (idChain, targetFolderId, newFolderName) => {
+  const handleUpdateItem = (idChain, targetItemId, newItemName) => {
     setData((draft) => {
       for (let i = 0; i < idChain.length; i++) {
         draft = draft.find((folder) => folder.id === idChain[i]).items;
       }
-      draft = draft.find((folder) => folder.id === targetFolderId);
-      draft.name = newFolderName;
-      draft.isEditing = false;
+      draft = draft.find((item) => item.id === targetItemId);
+      draft.name = newItemName;
+      draft.isEditingName = false;
     });
-  }; // END handleUpdateFolder
+  }; // END handleUpdateItem
 
   // Handles the display of the input, when the user is currently editing the
   // name of the folder.
   //
-  const handleEditFolder = (idChain, targetFolderId) => {
+  const handleEditItem = (idChain, targetItemId) => {
     setData((draft) => {
       for (let i = 0; i < idChain.length; i++) {
         draft = draft.find((folder) => folder.id === idChain[i]).items;
       }
-      draft = draft.find((folder) => folder.id === targetFolderId);
-      draft.isEditing = true;
+      draft = draft.find((item) => item.id === targetItemId);
+      draft.isEditingName = true;
     });
-  }; // END handleEditFolder
+  }; // END handleEditItem
 
-  const handleDeleteFolder = (idChain, targetFolderId) => {
+  const handleDeleteItem = (idChain, targetItemId) => {
     setData((draft) => {
       for (let i = 0; i < idChain.length; i++) {
         draft = draft.find((folder) => folder.id === idChain[i]).items;
       }
-      const index = draft.findIndex((folder) => folder.id === targetFolderId);
+      const index = draft.findIndex((item) => item.id === targetItemId);
       draft.splice(index, 1);
     });
   };
@@ -264,13 +243,21 @@ const Main = () => {
   // const noteIndex = notes.findIndex((note) => note.id == currentNoteId);
   return (
     <main id="main">
+      <div id="toolbar">
+        <button onClick={() => handleAddItem(null, null, 'File')}>
+          <i className="fa-solid fa-file"></i>
+        </button>
+        <button onClick={() => handleAddItem(null, null, 'Folder')}>
+          <i className="fa-solid fa-folder"></i>
+        </button>
+      </div>
       <FoldersAndFilesPanel
         data={data}
         onToggleExpand={handleToggleExpandFolder}
-        onUpdate={handleUpdateFolder}
-        onToggleEdit={handleEditFolder}
-        onAdd={handleAddFolder}
-        onDelete={handleDeleteFolder}
+        onUpdate={handleUpdateItem}
+        onToggleEdit={handleEditItem}
+        onAdd={handleAddItem}
+        onDelete={handleDeleteItem}
       />
 
       {/* <NotesPanel

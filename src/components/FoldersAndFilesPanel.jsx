@@ -1,4 +1,5 @@
 import FolderTab from './FolderTab';
+import FileTab from './FileTab';
 
 const FoldersAndFilesPanel = ({
   data,
@@ -22,6 +23,17 @@ const FoldersAndFilesPanel = ({
               onToggleEdit={onToggleEdit}
               onAdd={onAdd}
               onDelete={onDelete}
+            />
+          );
+        } else if (item.type === 'File') {
+          return (
+            <FileTab
+              key={item.id}
+              file={item}
+              paddingLeft={1}
+              onDelete={onDelete}
+              onToggleEdit={onToggleEdit}
+              onUpdate={onUpdate}
             />
           );
         }
