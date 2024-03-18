@@ -49,7 +49,7 @@ const dataReducer = (data, action) => {
     }
 
     case ACTIONS.TOGGLE_EXPAND_FOLDER: {
-      return toggleExpandFolder(data, 0, action.idChain, action.folderId);
+      return toggleExpandFolder(data, action.idChain, action.folderId);
     }
   }
 };
@@ -71,78 +71,99 @@ const Main = () => {
   }
 
   // const [data, setData] = useState(JSON.parse(localStorage.getItem('notes')));
-  const [data, dataDispatch] = useReducer(
-    dataReducer,
-    // JSON.parse(localStorage.getItem('notes'))
-    testData
-  );
+  const [data, setData] = useImmer(testData);
+  // const [data, dataDispatch] = useReducer(
+  //   dataReducer,
+  //   // JSON.parse(localStorage.getItem('notes'))
+  //   testData
+  // );
 
-  const handleAddFolder = (idChain, folderId) => {
-    dataDispatch({ type: ACTIONS.ADD_FOLDER, idChain, folderId });
-  };
-
-  const handleToggleExpandFolder = (idChain, folderId) => {
-    dataDispatch({ type: ACTIONS.TOGGLE_EXPAND_FOLDER, idChain, folderId });
-  };
-
-  const handleUpdateFolder = (idChain, folderId, newFolderName) => {
-    dataDispatch({
-      type: ACTIONS.UPDATE_FOLDER,
-      idChain,
-      folderId,
-      newFolderName,
+  const handleAddFolder = (idChain, targetFolderId) => {
+    setData((draft) => {
+      if (idChain === null) {
+        draft = [
+          {
+            id: uuidv4(),
+            parentFolderIds: [],
+            type: 'Folder',
+            name: 'Untitled',
+            expand: false,
+            isEditing: true,
+            items: [],
+          },
+          ...draft,
+        ];
+      } else {
+        for (let i = 0; i < idChain.length; i++) {
+          draft = draft.find((folder) => folder.id === idChain[i]).items;
+        }
+        draft = draft.find((folder) => folder.id === targetFolderId);
+        draft.expand = true;
+        draft.items = [
+          {
+            id: uuidv4(),
+            parentFolderIds: [...idChain, targetFolderId],
+            type: 'Folder',
+            name: 'Untitled',
+            expand: false,
+            isEditing: true,
+            items: [],
+          },
+          ...draft.items,
+        ];
+      }
     });
   };
 
-  const handleEditFolder = (idChain, folderId) => {
-    dataDispatch({ type: ACTIONS.EDIT_FOLDER, idChain, folderId });
+  // Handles the expanding/minimising of a folder (when a folder is expanded,
+  // its subfolders are shown).
+  //
+  const handleToggleExpandFolder = (idChain, targetFolderId) => {
+    setData((draft) => {
+      for (let i = 0; i < idChain.length; i++) {
+        draft = draft.find((folder) => folder.id === idChain[i]).items;
+      }
+      draft = draft.find((folder) => folder.id === targetFolderId);
+      draft.expand = !draft.expand;
+    });
+  }; // END handleToggleExpandFolder
+
+  // Handles the updating of the folder name, when the user has saved the
+  // changes to the new name of the folder.
+  //
+  const handleUpdateFolder = (idChain, targetFolderId, newFolderName) => {
+    setData((draft) => {
+      for (let i = 0; i < idChain.length; i++) {
+        draft = draft.find((folder) => folder.id === idChain[i]).items;
+      }
+      draft = draft.find((folder) => folder.id === targetFolderId);
+      draft.name = newFolderName;
+      draft.isEditing = false;
+    });
+  }; // END handleUpdateFolder
+
+  // Handles the display of the input, when the user is currently editing the
+  // name of the folder.
+  //
+  const handleEditFolder = (idChain, targetFolderId) => {
+    setData((draft) => {
+      for (let i = 0; i < idChain.length; i++) {
+        draft = draft.find((folder) => folder.id === idChain[i]).items;
+      }
+      draft = draft.find((folder) => folder.id === targetFolderId);
+      draft.isEditing = true;
+    });
+  }; // END handleEditFolder
+
+  const handleDeleteFolder = (idChain, targetFolderId) => {
+    setData((draft) => {
+      for (let i = 0; i < idChain.length; i++) {
+        draft = draft.find((folder) => folder.id === idChain[i]).items;
+      }
+      const index = draft.findIndex((folder) => folder.id === targetFolderId);
+      draft.splice(index, 1);
+    });
   };
-
-  // const handleToggleExpandFolder = (idChain, folderId) => {
-  //   if (idChain.length === 0) {
-  //     const newData = data.map((folder) => {
-  //       if (folder.id === folderId) {
-  //         folder.expand = !folder.expand;
-  //       }
-  //       return folder;
-  //     });
-  //     setData(newData);
-  //   } else {
-  //     setData(recursiveUpdateExpand(data, 0, idChain, folderId));
-  //   }
-  // };
-
-  // const recursiveUpdateExpand = (current, currentIndex, idChain, folderId) => {
-  //   console.log(idChain[currentIndex]);
-  //   if (currentIndex + 1 === idChain.length) {
-  //     current = current.map((folder) => {
-  //       if (folder.id === idChain[currentIndex]) {
-  //         folder.items = folder.items.map((folderItem) => {
-  //           if (folderItem.id === folderId) {
-  //             folderItem.expand = !folderItem.expand;
-  //           }
-  //           return folderItem;
-  //         });
-  //       }
-  //       return folder;
-  //     });
-  //     return current;
-  //   } else {
-  //     current = current.map((folder) => {
-  //       if (folder.id === idChain[currentIndex]) {
-  //         folder.items = recursiveUpdateExpand(
-  //           folder.items,
-  //           currentIndex + 1,
-  //           idChain,
-  //           folderId
-  //         );
-  //       }
-  //       return folder;
-  //     });
-  //   }
-
-  //   return current;
-  // };
 
   // Holds the id of the currently selected note.
   //
@@ -249,6 +270,7 @@ const Main = () => {
         onUpdate={handleUpdateFolder}
         onToggleEdit={handleEditFolder}
         onAdd={handleAddFolder}
+        onDelete={handleDeleteFolder}
       />
 
       {/* <NotesPanel

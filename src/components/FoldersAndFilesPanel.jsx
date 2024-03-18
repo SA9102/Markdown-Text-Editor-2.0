@@ -6,6 +6,7 @@ const FoldersAndFilesPanel = ({
   onUpdate,
   onToggleEdit,
   onAdd,
+  onDelete,
 }) => {
   return (
     <div id="folder-and-files-panel">
@@ -20,6 +21,7 @@ const FoldersAndFilesPanel = ({
               onUpdate={onUpdate}
               onToggleEdit={onToggleEdit}
               onAdd={onAdd}
+              onDelete={onDelete}
             />
           );
         }

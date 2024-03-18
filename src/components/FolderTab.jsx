@@ -8,6 +8,7 @@ const FolderTab = ({
   onToggleExpand,
   onToggleEdit,
   onAdd,
+  onDelete,
 }) => {
   const [isHover, setIsHover] = useState(false);
   const [newName, setNewName] = useState(folder.name);
@@ -75,7 +76,9 @@ const FolderTab = ({
                 >
                   <i className="fa-solid fa-pen"></i>
                 </button>
-                <button>
+                <button
+                  onClick={() => onDelete(folder.parentFolderIds, folder.id)}
+                >
                   <i className="fa-solid fa-trash-can"></i>
                 </button>
               </>
@@ -94,6 +97,7 @@ const FolderTab = ({
               onUpdate={onUpdate}
               onToggleEdit={onToggleEdit}
               onAdd={onAdd}
+              onDelete={onDelete}
             />
           );
         }
