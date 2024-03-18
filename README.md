@@ -38,6 +38,12 @@ To quickly get this app running locally on your machine, follow these steps:
 
 ## Update Log
 
+### 18th March 2024
+
+'nested-folder-system' branch created.
+
+Markdown Text Editor 2.0 is in development!
+
 ### 17th February 2024
 
 Project first released onto GitHub. :tada:
