@@ -1,0 +1,191 @@
+#main {
+    display: flex;
+    height: 100vh;
+  }
+
+  #editor-display-panel {
+    display: flex;
+    flex-direction: column;
+    background-color: #282828;
+    width: 1000px;
+    flex-grow: 1;
+    color: #bbbbbb;
+    word-wrap: break-word;
+  }
+
+  #editor-display-panel button {
+    flex-shrink: 0;
+  }
+
+  #btn-view,
+  #btn-edit {
+    margin: 0.2rem 0;
+  }
+
+  #markdown-display {
+    justify-self: flex-start;
+    word-wrap: break-word;
+    max-width: 100%;
+  }
+
+  .icon-button {
+    border: none;
+    width: 35px;
+    height: 35px;
+    background-color: transparent;
+    border-radius: 0.4rem;
+    color: #aaaaaa;
+    transition: background-color 0.1s;
+  }
+
+  .icon-button:hover {
+    cursor: pointer;
+    box-shadow: 0px 3px 10px -4px #191919;
+  }
+
+  #name-display {
+    background-color: #333333;
+    padding: 1rem;
+    border-top: 1px solid #222222;
+  }
+
+  #markdown-display {
+    overflow-y: scroll;
+    scrollbar-width: none;
+    background-color: #222222;
+    height: 100%;
+    padding: 0.4rem 1.2rem;
+  }
+
+  #markdown-display li {
+    list-style-type: disc;
+    margin-left: 1.5rem;
+  }
+
+  #markdown-display ul {
+    margin: 0;
+  }
+
+  #name {
+    background-color: #0a0202;
+    padding: 0.7rem 1rem;
+    border: none;
+    color: #aaaaaa;
+    font-family: "Courier New", Courier, monospace;
+    resize: none;
+    border-top-right-radius: 0.4rem;
+    border-bottom-right-radius: 0.4rem;
+  }
+
+  #text {
+    background-color: #222222;
+    padding: 0.7rem 1rem;
+    border: none;
+    color: #aaaaaa;
+    font-family: "Courier New", Courier, monospace;
+    flex-grow: 1;
+    resize: none;
+    overflow-y: scroll;
+    scrollbar-width: none;
+  }
+
+  #name-and-text-input {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex-grow: 1;
+  }
+
+  #name {
+    align-self: flex-start;
+  }
+
+  ul {
+    padding: 0.8rem;
+    margin: 0;
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  li {
+    list-style-type: none;
+  }
+
+  table,
+  th,
+  td {
+    border: 2px solid #bbbbbb;
+    border-collapse: collapse;
+    padding: 0.5rem;
+    text-align: center;
+  }
+
+  #notes-panel {
+    background-color: #2a2a2a;
+    overflow-y: scroll;
+    width: 350px;
+    border-right: 1px solid #222222;
+    scrollbar-width: none;
+  }
+
+  #notes-panel-header {
+    position: fixed;
+    padding: 0.2rem 0.8rem;
+    display: flex;
+  }
+
+  #button-create:hover {
+    background-color: #212a3bb4;
+  }
+
+  #button-delete:hover {
+    background-color: #3b2121b4;
+  }
+
+  #button-save:hover {
+    background-color: #3b3421b4;
+  }
+
+  #button-save-all {
+    background-color: #213b2d95;
+  }
+
+  #button-save-all:hover {
+    cursor: pointer;
+    background-color: #1d3227a5;
+    box-shadow: 0px 3px 10px -4px #191919;
+  }
+
+  .note-button {
+    border: none;
+    padding: 0.4rem 1.2rem;
+    font-weight: bold;
+    width: 100%;
+    border-radius: 0.4rem;
+    background-color: #2a2a2a;
+    color: #aaaaaa;
+    transition: background-color 0.1s, box-shadow 0.1s;
+    text-align: left;
+  }
+
+  .note-button-selected {
+    border: none;
+    padding: 0.4rem 1.2rem;
+    font-weight: bold;
+    width: 100%;
+    border-radius: 0.4rem;
+    background-color: #333333;
+    box-shadow: 0px 3px 10px -4px #1f1f1f;
+    color: #aaaaaa;
+    min-width: 0;
+    text-align: left;
+    flex: 1;
+  }
+
+  .note-button:hover {
+    cursor: pointer;
+    background-color: #222222;
+    box-shadow: 0px 3px 10px -4px #1f1f1f;
+  }

@@ -1,17 +1,58 @@
 // Hook/NPM package imports
 //
-import { useState } from "react";
-import { useImmer } from "use-immer"; // Allows you to directly 'mutate' an object in state
-import { v4 as uuidv4 } from "uuid";
+import { useState, useReducer } from 'react';
+import { useImmer } from 'use-immer'; // Allows you to directly 'mutate' an object in state
+import { v4 as uuidv4 } from 'uuid';
 
 // Component imports
 //
-import NoteEditor from "./NoteEditor";
-import MarkdownDisplay from "./MarkdownDisplay";
-import NotesPanel from "./NotesPanel";
+import NoteEditor from './NoteEditor';
+import MarkdownDisplay from './MarkdownDisplay';
+import NotesPanel from './NotesPanel';
+import FoldersAndFilesPanel from './FoldersAndFilesPanel';
 
-import "../styles/main.css";
+import testData from '../testData';
 
+import {
+  toggleExpandFolder,
+  updateFolder,
+  toggleEditFolder,
+  addFolder,
+} from '../utils/dataOperations';
+
+const ACTIONS = {
+  ADD_FOLDER: 'add_folder',
+  UPDATE_FOLDER: 'update_folder',
+  EDIT_FOLDER: 'edit_folder',
+  DELETE_FOLDER: 'delete_folder',
+  TOGGLE_EXPAND_FOLDER: 'toggle_expand_folder',
+};
+
+const dataReducer = (data, action) => {
+  switch (action.type) {
+    case ACTIONS.ADD_FOLDER: {
+      return addFolder(data, 0, action.idChain, action.folderId);
+    }
+
+    case ACTIONS.EDIT_FOLDER: {
+      return toggleEditFolder(data, 0, action.idChain, action.folderId);
+    }
+
+    case ACTIONS.UPDATE_FOLDER: {
+      return updateFolder(
+        data,
+        0,
+        action.idChain,
+        action.folderId,
+        action.newFolderName
+      );
+    }
+
+    case ACTIONS.TOGGLE_EXPAND_FOLDER: {
+      return toggleExpandFolder(data, 0, action.idChain, action.folderId);
+    }
+  }
+};
 const Main = () => {
   // Uncomment line below to reset local storage for this app.
   // localStorage.clear()
@@ -19,129 +60,198 @@ const Main = () => {
   // Returns the current full date and time.
   //
   const getCurrentDateAndTime = () => {
-    return new Date().toLocaleString("default", {
-      dateStyle: "full",
-      timeStyle: "long",
+    return new Date().toLocaleString('default', {
+      dateStyle: 'full',
+      timeStyle: 'long',
     });
   }; // END getCurrentDateAndTime
 
-  if (!localStorage.getItem("notes")) {
-    const welcomeNote = [
-      {
-        id: uuidv4(),
-        name: "Welcome!",
-        text: "**Thank you for checking out this project!**\n\nQuickly create notes using Markdown and save them to your browser's local storage.\n\nMake sure to save your notes (floppy disk button) before closing the browser.\n\nThe green floppy disk button saves everything, whereas the non-coloured one saves only the selected note.",
-        editing: false,
-        created: getCurrentDateAndTime(),
-      },
-    ];
-
-    localStorage.setItem("notes", JSON.stringify(welcomeNote));
+  if (!localStorage.getItem('notes')) {
+    localStorage.setItem('notes', JSON.stringify(testData));
   }
 
-  const [notes, setNotes] = useImmer(JSON.parse(localStorage.getItem("notes")));
+  // const [data, setData] = useState(JSON.parse(localStorage.getItem('notes')));
+  const [data, dataDispatch] = useReducer(
+    dataReducer,
+    // JSON.parse(localStorage.getItem('notes'))
+    testData
+  );
+
+  const handleAddFolder = (idChain, folderId) => {
+    dataDispatch({ type: ACTIONS.ADD_FOLDER, idChain, folderId });
+  };
+
+  const handleToggleExpandFolder = (idChain, folderId) => {
+    dataDispatch({ type: ACTIONS.TOGGLE_EXPAND_FOLDER, idChain, folderId });
+  };
+
+  const handleUpdateFolder = (idChain, folderId, newFolderName) => {
+    dataDispatch({
+      type: ACTIONS.UPDATE_FOLDER,
+      idChain,
+      folderId,
+      newFolderName,
+    });
+  };
+
+  const handleEditFolder = (idChain, folderId) => {
+    dataDispatch({ type: ACTIONS.EDIT_FOLDER, idChain, folderId });
+  };
+
+  // const handleToggleExpandFolder = (idChain, folderId) => {
+  //   if (idChain.length === 0) {
+  //     const newData = data.map((folder) => {
+  //       if (folder.id === folderId) {
+  //         folder.expand = !folder.expand;
+  //       }
+  //       return folder;
+  //     });
+  //     setData(newData);
+  //   } else {
+  //     setData(recursiveUpdateExpand(data, 0, idChain, folderId));
+  //   }
+  // };
+
+  // const recursiveUpdateExpand = (current, currentIndex, idChain, folderId) => {
+  //   console.log(idChain[currentIndex]);
+  //   if (currentIndex + 1 === idChain.length) {
+  //     current = current.map((folder) => {
+  //       if (folder.id === idChain[currentIndex]) {
+  //         folder.items = folder.items.map((folderItem) => {
+  //           if (folderItem.id === folderId) {
+  //             folderItem.expand = !folderItem.expand;
+  //           }
+  //           return folderItem;
+  //         });
+  //       }
+  //       return folder;
+  //     });
+  //     return current;
+  //   } else {
+  //     current = current.map((folder) => {
+  //       if (folder.id === idChain[currentIndex]) {
+  //         folder.items = recursiveUpdateExpand(
+  //           folder.items,
+  //           currentIndex + 1,
+  //           idChain,
+  //           folderId
+  //         );
+  //       }
+  //       return folder;
+  //     });
+  //   }
+
+  //   return current;
+  // };
 
   // Holds the id of the currently selected note.
   //
-  const [currentNoteId, setCurrentNoteId] = useState(notes[0].id);
-  const [saves, setSaves] = useState(0);
+  // const [currentNoteId, setCurrentNoteId] = useState(notes[0].id);
+  // const [saves, setSaves] = useState(0);
 
   // When a user edits the title/text of a note, this method handles
   // the change of the title/text of the note.
   //
-  const onChange = (event, noteIndex) => {
-    const updatedNote = {
-      ...notes[noteIndex],
-      [event.target.name]: event.target.value,
-    };
+  // const onChange = (event, noteIndex) => {
+  //   const updatedNote = {
+  //     ...notes[noteIndex],
+  //     [event.target.name]: event.target.value,
+  //   };
 
-    setNotes((draft) => {
-      draft[noteIndex] = updatedNote;
-    });
-  }; // END onChange
+  //   setNotes((draft) => {
+  //     draft[noteIndex] = updatedNote;
+  //   });
+  // }; // END onChange
 
-  // Select the note with the given id.
-  //
-  const handleChangeNote = (id) => {
-    setCurrentNoteId(id);
-  }; // END handleChangeNote
+  // // Select the note with the given id.
+  // //
+  // const handleChangeNote = (id) => {
+  //   setCurrentNoteId(id);
+  // }; // END handleChangeNote
 
-  // Handles the creation of a new note.
-  //
-  const handleCreateNote = () => {
-    const newNoteId = uuidv4();
+  // // Handles the creation of a new note.
+  // //
+  // const handleCreateNote = () => {
+  //   const newNoteId = uuidv4();
 
-    setNotes([
-      ...notes,
-      {
-        id: newNoteId,
-        name: "Untitled",
-        text: "",
-        editing: true,
-        created: getCurrentDateAndTime(),
-        updated: getCurrentDateAndTime(),
-      },
-    ]);
-    setCurrentNoteId(newNoteId);
-  }; // END handleCreateNote
+  //   setNotes([
+  //     ...notes,
+  //     {
+  //       id: newNoteId,
+  //       name: "Untitled",
+  //       text: "",
+  //       editing: true,
+  //       created: getCurrentDateAndTime(),
+  //       updated: getCurrentDateAndTime(),
+  //     },
+  //   ]);
+  //   setCurrentNoteId(newNoteId);
+  // }; // END handleCreateNote
 
-  // Handles the deletion of the currently selected note.
-  //
-  const handleDeleteNote = () => {
-    const newNotes = notes.filter((note) => note.id != currentNoteId);
-    setNotes(newNotes);
+  // // Handles the deletion of the currently selected note.
+  // //
+  // const handleDeleteNote = () => {
+  //   const newNotes = notes.filter((note) => note.id != currentNoteId);
+  //   setNotes(newNotes);
 
-    if (currentNoteId == notes[0].id) {
-      // If the first note in the list is selected
-      if (notes.length == 1) {
-        setNotes([
-          {
-            id: currentNoteId,
-            name: "",
-            text: "",
-            created: getCurrentDateAndTime(),
-            editing: true,
-          },
-        ]);
-        setCurrentNoteId(currentNoteId);
-      } else {
-        setCurrentNoteId(notes[1].id);
-      }
-    } else {
-      setCurrentNoteId(notes[0].id);
-    }
-  }; // END handleDeleteNote
+  //   if (currentNoteId == notes[0].id) {
+  //     // If the first note in the list is selected
+  //     if (notes.length == 1) {
+  //       setNotes([
+  //         {
+  //           id: currentNoteId,
+  //           name: "",
+  //           text: "",
+  //           created: getCurrentDateAndTime(),
+  //           editing: true,
+  //         },
+  //       ]);
+  //       setCurrentNoteId(currentNoteId);
+  //     } else {
+  //       setCurrentNoteId(notes[1].id);
+  //     }
+  //   } else {
+  //     setCurrentNoteId(notes[0].id);
+  //   }
+  // }; // END handleDeleteNote
 
-  // Toggle a particular note for editing or for viewing in markdown.
-  //
-  const handleToggleNoteEdit = (noteIndex, editing) => {
-    const updatedNote = { ...notes[noteIndex], editing: editing };
-    setNotes((draft) => {
-      draft[noteIndex] = updatedNote;
-    });
-  }; // END handleToggleNoteEdit
+  // // Toggle a particular note for editing or for viewing in markdown.
+  // //
+  // const handleToggleNoteEdit = (noteIndex, editing) => {
+  //   const updatedNote = { ...notes[noteIndex], editing: editing };
+  //   setNotes((draft) => {
+  //     draft[noteIndex] = updatedNote;
+  //   });
+  // }; // END handleToggleNoteEdit
 
-  // Saves the current note to the browser's local storage.
-  //
-  const handleSaveNote = (noteIndex) => {
-    let localStorageData = JSON.parse(localStorage.getItem("notes"));
-    localStorageData[noteIndex] = notes[noteIndex];
-    localStorage.setItem("notes", JSON.stringify(localStorageData));
-    setSaves(saves + 1); // Just to cause the page to re-render
-  };
+  // // Saves the current note to the browser's local storage.
+  // //
+  // const handleSaveNote = (noteIndex) => {
+  //   let localStorageData = JSON.parse(localStorage.getItem("notes"));
+  //   localStorageData[noteIndex] = notes[noteIndex];
+  //   localStorage.setItem("notes", JSON.stringify(localStorageData));
+  //   setSaves(saves + 1); // Just to cause the page to re-render
+  // };
 
-  const handleSaveAllNotes = () => {
-    localStorage.setItem("notes", JSON.stringify(notes));
-    setSaves(saves + 1); // Just to cause the page to re-render
-  };
+  // const handleSaveAllNotes = () => {
+  //   localStorage.setItem("notes", JSON.stringify(notes));
+  //   setSaves(saves + 1); // Just to cause the page to re-render
+  // };
 
-  // Get the index of the currently selected note.
-  //
-  const noteIndex = notes.findIndex((note) => note.id == currentNoteId);
-
+  // // Get the index of the currently selected note.
+  // //
+  // const noteIndex = notes.findIndex((note) => note.id == currentNoteId);
   return (
     <main id="main">
-      <NotesPanel
+      <FoldersAndFilesPanel
+        data={data}
+        onToggleExpand={handleToggleExpandFolder}
+        onUpdate={handleUpdateFolder}
+        onToggleEdit={handleEditFolder}
+        onAdd={handleAddFolder}
+      />
+
+      {/* <NotesPanel
         notes={notes}
         noteIndex={noteIndex}
         currentNoteId={currentNoteId}
@@ -183,7 +293,7 @@ const Main = () => {
             <MarkdownDisplay note={notes[noteIndex]} />
           </>
         )}
-      </div>
+      </div> */}
     </main>
   );
 };
