@@ -1,7 +1,7 @@
 const testData = [
   {
-    parentFolderIds: [],
     id: 99,
+    parentFolderIds: [],
     type: 'File',
     name: 'New File',
     body: '',

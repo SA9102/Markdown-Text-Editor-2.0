@@ -1,17 +1,30 @@
 // Hook/NPM package imports
 //
 import { useState, useReducer } from 'react';
-import { useImmer } from 'use-immer'; // Allows you to directly 'mutate' an object in state
+import { produce } from 'immer';
 import { v4 as uuidv4 } from 'uuid';
+
+// Types
+import FileAndFolderTreeType from '../types/FileAndFolderTreeType';
+import FolderType from '../types/FolderType';
+import FileType from '../types/FileType';
 
 // Component imports
 //
-import NoteEditor from './NoteEditor';
-import MarkdownDisplay from './MarkdownDisplay';
-import NotesPanel from './NotesPanel';
+// import NoteEditor from './NoteEditor';
+// import MarkdownDisplay from './MarkdownDisplay';
+// import NotesPanel from './NotesPanel';
 import FoldersAndFilesPanel from './FoldersAndFilesPanel';
 
 import testData from '../testData';
+
+const enum ACTIONS {
+  ADD_ITEM,
+  UPDATE_ITEM,
+  EDIT_ITEM,
+  DELETE_ITEM,
+  EXPAND_FOLDER,
+}
 
 const Main = () => {
   // Uncomment line below to reset local storage for this app.
@@ -31,117 +44,187 @@ const Main = () => {
   // }
 
   // const [data, setData] = useState(JSON.parse(localStorage.getItem('notes')));
-  const [data, setData] = useImmer(testData);
+  // const [data, setData] = useImmer(testData);
+  const [data, dispatch] = useReducer(
+    produce((draft, action) => {
+      switch (action.type) {
+        case ACTIONS.ADD_ITEM:
+          if (action.payload.idChain === null) {
+            if (action.payload.itemType === 'Folder') {
+              draft.unshift({
+                id: uuidv4(),
+                parentFolderIds: [],
+                type: 'Folder',
+                name: 'Untitled',
+                expand: false,
+                isEditingName: true,
+                items: [],
+              });
+            } else if (action.payload.itemType === 'File') {
+              draft.unshift({
+                id: uuidv4(),
+                parentFolderIds: [],
+                type: 'File',
+                name: 'Untitled',
+                body: '',
+                isSelected: false,
+                isEditingName: true,
+              });
+            }
+          } else {
+            for (let i = 0; i < action.payload.idChain.length; i++) {
+              draft = draft.find(
+                (folder: FolderType) => folder.id === action.payload.idChain[i]
+              ).items;
+            }
+            draft = draft.find(
+              (folder: FolderType) => folder.id === action.payload.targetItemId
+            );
+            draft.expand = true;
+            if (action.payload.itemType === 'Folder') {
+              draft.items = [
+                {
+                  id: uuidv4(),
+                  parentFolderIds: [
+                    ...action.payload.idChain,
+                    action.payload.targetItemId,
+                  ],
+                  type: 'Folder',
+                  name: 'Untitled',
+                  expand: false,
+                  isEditingName: true,
+                  items: [],
+                },
+                ...draft.items,
+              ];
+            } else if (action.payload.itemType === 'File') {
+              draft.items = [
+                {
+                  id: uuidv4(),
+                  parentFolderIds: [
+                    ...action.payload.idChain,
+                    action.payload.targetItemId,
+                  ],
+                  type: 'File',
+                  name: 'Untitled',
+                  body: '',
+                  isSelected: false,
+                  isEditingName: true,
+                },
+                ...draft.items,
+              ];
+            }
+          }
+          break;
 
-  const handleAddItem = (idChain, targetItemId, itemType) => {
-    setData((draft) => {
-      if (idChain === null) {
-        if (itemType === 'Folder') {
-          draft.unshift({
-            id: uuidv4(),
-            parentFolderIds: [],
-            type: 'Folder',
-            name: 'Untitled',
-            expand: false,
-            isEditingName: true,
-            items: [],
-          });
-        } else if (itemType === 'File') {
-          draft.unshift({
-            id: uuidv4(),
-            parentFolderIds: [],
-            type: 'File',
-            name: 'Untitled',
-            body: '',
-            isSelected: false,
-            isEditingName: true,
-          });
-        }
-      } else {
-        for (let i = 0; i < idChain.length; i++) {
-          draft = draft.find((folder) => folder.id === idChain[i]).items;
-        }
-        draft = draft.find((folder) => folder.id === targetItemId);
-        draft.expand = true;
-        if (itemType === 'Folder') {
-          draft.items = [
-            {
-              id: uuidv4(),
-              parentFolderIds: [...idChain, targetItemId],
-              type: 'Folder',
-              name: 'Untitled',
-              expand: false,
-              isEditingName: true,
-              items: [],
-            },
-            ...draft.items,
-          ];
-        } else if (itemType === 'File') {
-          draft.items = [
-            {
-              id: uuidv4(),
-              parentFolderIds: [...idChain, targetItemId],
-              type: 'File',
-              name: 'Untitled',
-              body: '',
-              isSelected: false,
-              isEditingName: true,
-            },
-            ...draft.items,
-          ];
-        }
+        case ACTIONS.UPDATE_ITEM:
+          for (let i = 0; i < action.payload.idChain.length; i++) {
+            draft = draft.find(
+              (folder: FolderType) => folder.id === action.payload.idChain[i]
+            ).items;
+          }
+          draft = draft.find(
+            (item: FolderType | FileType) =>
+              item.id === action.payload.targetItemId
+          );
+          draft.name = action.payload.newItemName;
+          draft.isEditingName = false;
+          break;
+
+        case ACTIONS.EDIT_ITEM:
+          for (let i = 0; i < action.payload.idChain.length; i++) {
+            draft = draft.find(
+              (folder: FolderType) => folder.id === action.payload.idChain[i]
+            ).items;
+          }
+          draft = draft.find(
+            (item: FolderType | FileType) =>
+              item.id === action.payload.targetItemId
+          );
+          draft.isEditingName = true;
+          break;
+
+        case ACTIONS.DELETE_ITEM:
+          for (let i = 0; i < action.payload.idChain.length; i++) {
+            draft = draft.find(
+              (folder: FolderType) => folder.id === action.payload.idChain[i]
+            ).items;
+          }
+          const index = draft.findIndex(
+            (item: FolderType | FileType) =>
+              item.id === action.payload.targetItemId
+          );
+          draft.splice(index, 1);
+          break;
+
+        case ACTIONS.EXPAND_FOLDER:
+          for (let i = 0; i < action.payload.idChain.length; i++) {
+            draft = draft.find(
+              (folder: FolderType) => folder.id === action.payload.idChain[i]
+            ).items;
+          }
+          draft = draft.find(
+            (folder: FolderType) => folder.id === action.payload.targetFolderId
+          );
+          draft.expand = !draft.expand;
+          break;
+
+        default:
+          break;
       }
+    }),
+    testData
+  );
+
+  const handleAddItem = (
+    idChain: string[] | null,
+    targetItemId: string | null,
+    itemType: string
+  ) => {
+    dispatch({
+      type: ACTIONS.ADD_ITEM,
+      payload: { idChain, targetItemId, itemType },
     });
   };
 
   // Handles the expanding/minimising of a folder (when a folder is expanded,
   // its subfolders are shown).
   //
-  const handleToggleExpandFolder = (idChain, targetFolderId) => {
-    setData((draft) => {
-      for (let i = 0; i < idChain.length; i++) {
-        draft = draft.find((folder) => folder.id === idChain[i]).items;
-      }
-      draft = draft.find((folder) => folder.id === targetFolderId);
-      draft.expand = !draft.expand;
+  const handleToggleExpandFolder = (
+    idChain: string[],
+    targetFolderId: string
+  ) => {
+    dispatch({
+      type: ACTIONS.EXPAND_FOLDER,
+      payload: { idChain, targetFolderId },
     });
-  }; // END handleToggleExpandFolder
+  };
 
   // Handles the updating of the folder name, when the user has saved the
   // changes to the new name of the folder.
   //
-  const handleUpdateItem = (idChain, targetItemId, newItemName) => {
-    setData((draft) => {
-      for (let i = 0; i < idChain.length; i++) {
-        draft = draft.find((folder) => folder.id === idChain[i]).items;
-      }
-      draft = draft.find((item) => item.id === targetItemId);
-      draft.name = newItemName;
-      draft.isEditingName = false;
+  const handleUpdateItem = (
+    idChain: string[],
+    targetItemId: string,
+    newItemName: string
+  ) => {
+    dispatch({
+      type: ACTIONS.UPDATE_ITEM,
+      payload: { idChain, targetItemId, newItemName },
     });
-  }; // END handleUpdateItem
+  };
 
   // Handles the display of the input, when the user is currently editing the
   // name of the folder.
   //
-  const handleEditItem = (idChain, targetItemId) => {
-    setData((draft) => {
-      for (let i = 0; i < idChain.length; i++) {
-        draft = draft.find((folder) => folder.id === idChain[i]).items;
-      }
-      draft = draft.find((item) => item.id === targetItemId);
-      draft.isEditingName = true;
-    });
-  }; // END handleEditItem
+  const handleEditItem = (idChain: string[], targetItemId: string) => {
+    dispatch({ type: ACTIONS.EDIT_ITEM, payload: { idChain, targetItemId } });
+  };
 
-  const handleDeleteItem = (idChain, targetItemId) => {
-    setData((draft) => {
-      for (let i = 0; i < idChain.length; i++) {
-        draft = draft.find((folder) => folder.id === idChain[i]).items;
-      }
-      const index = draft.findIndex((item) => item.id === targetItemId);
-      draft.splice(index, 1);
-    });
+  // Handles the deletion of a particular file/folder
+  //
+  const handleDeleteItem = (idChain: string[], targetItemId: string) => {
+    dispatch({ type: ACTIONS.DELETE_ITEM, payload: { idChain, targetItemId } });
   };
 
   // Holds the id of the currently selected note.
