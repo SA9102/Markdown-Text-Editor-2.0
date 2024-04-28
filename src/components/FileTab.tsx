@@ -22,7 +22,9 @@ const FileTab = ({ file, paddingLeft, onDelete, onToggleEdit, onUpdateName, onUp
             style={{ paddingLeft: `${paddingLeft}rem` }}
             onMouseOver={() => setIsHover(true)}
             onMouseOut={() => setIsHover(false)}
-            onDoubleClick={() => onSelectFile(file.id, file.parentFolderIds, file.name)}
+            onDoubleClick={() => {
+                onSelectFile(file.id, file.parentFolderIds, file.name);
+            }}
         >
             {file.isEditingName ? (
                 <>
