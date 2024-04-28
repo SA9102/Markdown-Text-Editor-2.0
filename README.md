@@ -38,4 +38,5 @@ The following features won't be in the first version of Markdown Text Editor 2.0
 
 ### 4th April 2024
 
-Simple file explorer added.
+- Simple file explorer added.
+- Fixed bug where the Markdown viewer was not showing, and also a bug where the file tabs would not be removed correctly when a file or a folder was deleted.
