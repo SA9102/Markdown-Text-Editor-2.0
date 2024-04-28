@@ -5,6 +5,10 @@
 
 **Only very minimal CSS has been added to the program right now.**
 
+
+https://github.com/SA9102/Markdown-Text-Editor/assets/96877426/e5c746b1-ad50-4283-a260-1726b8a447af
+
+
 ## :sparkles: New Features
 
 These are the **main** features that I am planning to implement in the new version:
