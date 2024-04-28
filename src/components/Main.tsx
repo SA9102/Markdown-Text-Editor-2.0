@@ -247,19 +247,36 @@ const Main = () => {
 
     // Handles the deletion of a particular file/folder
     //
-    const handleDeleteItem = (idChain: string[], targetItemId: string) => {
+    const handleDeleteItem = (idChain: string[], targetItemId: string, itemType: string) => {
         dispatch({ type: ACTIONS.DELETE_ITEM, payload: { idChain, targetItemId } });
 
-        const currentNotes = localStorage.getItem('files');
-        if (currentNotes) {
-            let currentNotesObj = JSON.parse(currentNotes);
-            currentNotesObj = currentNotesObj.filter((file: FileCacheType) => !file.parentFolderIds.includes(targetItemId));
-            localStorage.setItem('files', JSON.stringify(currentNotesObj));
-        }
-        const newRecentFileTabs = recentFileTabs.filter((file: RecentFileTabsType) => !file.parentFolderIds.includes(targetItemId));
-        setRecentFileTabs(newRecentFileTabs);
-        if (selectedFile.includes(targetItemId)) {
-            setSelectedFile('-1');
+        // Handle the case where a folder is deleted, and there are file tabs where the files are in that folder.
+        if (itemType === 'folder') {
+            const currentNotes = localStorage.getItem('files');
+            if (currentNotes) {
+                let currentNotesObj = JSON.parse(currentNotes);
+                currentNotesObj = currentNotesObj.filter((file: FileCacheType) => !file.parentFolderIds.includes(targetItemId));
+                localStorage.setItem('files', JSON.stringify(currentNotesObj));
+            }
+
+            // If a file is currently open, and is within the deleted folder.
+            const newRecentFileTabs = recentFileTabs.filter((file: RecentFileTabsType) => !file.parentFolderIds.includes(targetItemId));
+            setRecentFileTabs(newRecentFileTabs);
+            if (selectedFile.includes(targetItemId)) {
+                setSelectedFile('-1');
+            }
+            // Handle the case where a file is deleted.
+        } else if (itemType === 'file') {
+            const currentNotes = localStorage.getItem('files');
+            if (currentNotes) {
+                let currentNotesObj = JSON.parse(currentNotes);
+                // Remove from local storage
+                currentNotesObj = currentNotesObj.filter((file: FileCacheType) => file.id !== targetItemId);
+                localStorage.setItem('files', JSON.stringify(currentNotesObj));
+            }
+            // Remove tab for file
+            const newRecentFileTabs = recentFileTabs.filter((file: RecentFileTabsType) => file.id !== targetItemId);
+            setRecentFileTabs(newRecentFileTabs);
         }
     };
 

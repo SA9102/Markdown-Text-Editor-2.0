@@ -5,7 +5,7 @@ import FileType from '../types/FileType';
 type FileTabProps = {
     file: FileType;
     paddingLeft: number;
-    onDelete: (arg0: string[], arg1: string) => void;
+    onDelete: (arg0: string[], arg1: string, arg2: string) => void;
     onToggleEdit: (arg0: string[], arg1: string) => void;
     onUpdateName: (arg0: string[], arg1: string, arg2: string) => void;
     onUpdateBody: (arg0: string[], arg1: string, arg2: string) => void;
@@ -44,7 +44,7 @@ const FileTab = ({ file, paddingLeft, onDelete, onToggleEdit, onUpdateName, onUp
                             <button onClick={() => onToggleEdit(file.parentFolderIds, file.id)}>
                                 <i className="fa-solid fa-pen"></i>
                             </button>
-                            <button onClick={() => onDelete(file.parentFolderIds, file.id)}>
+                            <button onClick={() => onDelete(file.parentFolderIds, file.id, 'file')}>
                                 <i className="fa-solid fa-trash-can"></i>
                             </button>
                         </>

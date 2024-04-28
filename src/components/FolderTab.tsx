@@ -9,7 +9,7 @@ import FileAndFolderTreeType from '../types/FileAndFolderTreeType';
 type FolderTabProps = {
     folder: FolderType;
     paddingLeft: number;
-    onDelete: (arg0: string[], arg1: string) => void;
+    onDelete: (arg0: string[], arg1: string, arg2: string) => void;
     onToggleEdit: (arg0: string[], arg1: string) => void;
     onUpdateName: (arg0: string[], arg1: string, arg2: string) => void;
     onUpdateBody: (arg0: string[], arg1: string, arg2: string) => void;
@@ -68,7 +68,7 @@ const FolderTab = ({ folder, paddingLeft, onUpdateName, onUpdateBody, onToggleEx
                                 <button onClick={() => onToggleEdit(folder.parentFolderIds, folder.id)}>
                                     <i className="fa-solid fa-pen"></i>
                                 </button>
-                                <button onClick={() => onDelete(folder.parentFolderIds, folder.id)}>
+                                <button onClick={() => onDelete(folder.parentFolderIds, folder.id, 'folder')}>
                                     <i className="fa-solid fa-trash-can"></i>
                                 </button>
                             </>
