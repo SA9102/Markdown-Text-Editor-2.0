@@ -9,7 +9,7 @@ type FileTabProps = {
     onToggleEdit: (arg0: string[], arg1: string) => void;
     onUpdateName: (arg0: string[], arg1: string, arg2: string) => void;
     onUpdateBody: (arg0: string[], arg1: string, arg2: string) => void;
-    onSelectFile: (arg0: string, arg1: string) => void;
+    onSelectFile: (arg0: string, arg1: string[], arg2: string) => void;
 };
 
 const FileTab = ({ file, paddingLeft, onDelete, onToggleEdit, onUpdateName, onUpdateBody, onSelectFile }: FileTabProps) => {
@@ -22,7 +22,7 @@ const FileTab = ({ file, paddingLeft, onDelete, onToggleEdit, onUpdateName, onUp
             style={{ paddingLeft: `${paddingLeft}rem` }}
             onMouseOver={() => setIsHover(true)}
             onMouseOut={() => setIsHover(false)}
-            onDoubleClick={() => onSelectFile(file.id, file.name)}
+            onDoubleClick={() => onSelectFile(file.id, file.parentFolderIds, file.name)}
         >
             {file.isEditingName ? (
                 <>

@@ -15,7 +15,7 @@ type FolderTabProps = {
     onUpdateBody: (arg0: string[], arg1: string, arg2: string) => void;
     onAdd: (arg0: string[], arg1: string, arg2: string) => void;
     onToggleExpand: (arg0: string[], arg1: string) => void;
-    onSelectFile: (arg0: string, arg1: string) => void;
+    onSelectFile: (arg0: string, arg1: string[], arg2: string) => void;
 };
 
 const isFolder = (item: FolderType | FileType): item is FolderType => {
