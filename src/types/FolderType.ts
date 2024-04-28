@@ -1,4 +1,5 @@
 import FileType from './FileType';
+import FileAndFolderTreeType from './FileAndFolderTreeType';
 
 type FolderType = {
   id: string;
@@ -7,7 +8,7 @@ type FolderType = {
   name: string;
   isExpand: boolean;
   isEditingName: boolean;
-  items: (FolderType | FileType)[];
+  items: FileAndFolderTreeType;
 };
 
 export default FolderType;
