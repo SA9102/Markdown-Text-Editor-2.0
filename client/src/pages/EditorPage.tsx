@@ -10,7 +10,7 @@ import FileType from '../types/FileType';
 // Component imports
 import MarkdownEditor from '../componentsNew/MarkdownEditor';
 import MarkdownViewer from '../componentsNew/MarkdownViewer';
-import FileExplorerPanel from './FileExplorerPanel';
+import FileExplorerPanel from '../components/FileExplorerPanel';
 
 import testData from '../testData';
 
@@ -35,7 +35,7 @@ type RecentFileTabsType = {
     name: string;
 };
 
-const Main = () => {
+const EditorPage = () => {
     // Returns the current full date and time.
     //
     const getCurrentDateAndTime = () => {
@@ -54,6 +54,7 @@ const Main = () => {
     const [fileExplorerOpen, setFileExplorerOpen] = useState(true);
     const [editorAndViewer, setEditorAndViewer] = useState(true);
     const [recentFileTabs, setRecentFileTabs] = useState<RecentFileTabsType[]>([]);
+    const [page, setPage] = useState('main');
 
     const [data, dispatch] = useReducer(
         produce((draft, action) => {
@@ -314,11 +315,7 @@ const Main = () => {
     };
 
     return (
-        <main id="main">
-            <div>
-                <button onClick={() => setFileExplorerOpen(!fileExplorerOpen)}>File Explorer: {fileExplorerOpen ? 'On' : 'Off'}</button>
-                <button onClick={() => setEditorAndViewer(!editorAndViewer)}>Showing: {editorAndViewer ? 'Editor and Viewer' : 'Viewer only'}</button>
-            </div>
+        <>
             {fileExplorerOpen && (
                 <div id="file-explorer-panel">
                     <div id="toolbar">
@@ -358,8 +355,8 @@ const Main = () => {
                     </div>
                 );
             })}
-        </main>
+        </>
     );
 };
 
-export default Main;
+export default EditorPage;
