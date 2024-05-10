@@ -38,6 +38,8 @@ To quickly get this app running locally on your machine, follow these steps:
 
 ## Update Log
 
+I'm currently working within the `mte-2` branch so check that out for more update logs!
+
 ### 18th March 2024
 
 'nested-folder-system' branch created.
