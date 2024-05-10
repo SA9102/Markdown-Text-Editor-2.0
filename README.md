@@ -25,6 +25,10 @@ When a user opens a new file, a tab will appear which the user can click on to q
 
 Users can create an account, and so will be able to permanently save their files to a database. This means they can access their files from any machine.
 
+### Download Files as PDF
+
+Users can download a text file as a Portable Document Format.
+
 ### Customisation
 
 Much like an IDE, users will be able to customise parts of the interface such as the editor and viewer fonts. The program will also feature light and dark modes.
