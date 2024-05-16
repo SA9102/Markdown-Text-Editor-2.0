@@ -1,10 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './components/App.js';
-import './index.css';
 import axios from 'axios';
-
-// Joy UI
 import { BrowserRouter } from 'react-router-dom';
 
 // Mantine
@@ -31,5 +28,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <App />
     </BrowserRouter>
   </MantineProvider>
-  // </React.StrictMode>,
+  // </React.StrictMode>
 );

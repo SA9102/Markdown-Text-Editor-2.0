@@ -4,9 +4,6 @@ import { useState } from 'react';
 // Custom components
 import FileTab from './FileTab';
 
-// CSS
-import '../styles/FolderTab.css';
-
 // Types
 import FolderType from '../types/FolderType';
 import FileType from '../types/FileType';
