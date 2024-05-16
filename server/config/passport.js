@@ -1,26 +1,75 @@
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const mongoose = require('mongoose');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+require('dotenv').config();
+const conn = require('./database');
 const User = require('../models/User');
+const validatePassword = require('../lib/passwordUtils').validatePassword;
 
-module.exports = function (passport) {
-    passport.use(
-        new GoogleStrategy(
-            {
-                clientID: process.env.GOOGLE_CLIENT_ID,
-                clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                callbackURL: '/auth/google/callback',
-            },
-            async (accessToken, refreshToken, profile, done) => {
-                console.log(profile);
-            }
-        )
-    );
+const customFields = {
+  usernameField: 'username',
+  passwordField: 'password',
+};
 
-    passport.serializeUser((user, done) => {
-        done(null, user.id);
-    });
+const verifyCallback = (username, password, done) => {
+  console.log('In verifyCallback...');
+  User.findOne({ username: username })
+    .then((user) => {
+      if (!user) {
+        console.log('User not found');
+        return done(null, false);
+      }
+      const isValid = validatePassword(password, user.password, user.salt);
 
-    passport.deserializeUser((id, done) => {
-        User.findById(id, (err, user) => done(err, user));
+      if (isValid) {
+        console.log('IS VALID');
+        return done(null, user);
+      } else {
+        console.log('IS NOT VALID');
+        return done(null, false);
+      }
+    })
+    .catch((err) => {
+      done(err);
     });
 };
+
+const strategy = new LocalStrategy(customFields, verifyCallback);
+
+passport.use(strategy);
+
+// module.exports = passport.use(
+//   new LocalStrategy((username, password, done) => {
+//     User.findOne({ username: username })
+//       .then((user) => {
+//         if (!user) {
+//           return done(null, false);
+//         }
+//         const isValid = validatePassword(password, user.password, user.salt);
+
+//         if (isValid) {
+//           console.log('IS VALID');
+//           return done(null, user);
+//         } else {
+//           console.log('IS NOT VALID');
+//           return done(null, false);
+//         }
+//       })
+//       .catch((err) => {
+//         done(err);
+//       });
+//   })
+// );
+
+passport.serializeUser((user, done) => {
+  console.log('IN SERIALIZE USER');
+  done(null, user.id);
+});
+
+passport.deserializeUser((userId, done) => {
+  console.log('IN DESERIALIZE USER');
+  User.findById(userId)
+    .then((user) => {
+      done(null, user);
+    })
+    .catch((err) => done(err));
+});

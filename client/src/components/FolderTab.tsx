@@ -1,118 +1,122 @@
+// React
 import { useState } from 'react';
+
+// Custom components
 import FileTab from './FileTab';
+
+// CSS
 import '../styles/FolderTab.css';
 
+// Types
 import FolderType from '../types/FolderType';
 import FileType from '../types/FileType';
-import FileAndFolderTreeType from '../types/FileAndFolderTreeType';
+
+// Mantine
+import { ActionIcon } from '@mantine/core';
+
+// Tabler icons
+import { IconChevronDown, IconChevronRight, IconFolderFilled, IconFileFilled, IconTrashFilled, IconEdit } from '@tabler/icons-react';
 
 type FolderTabProps = {
-    folder: FolderType;
-    paddingLeft: number;
-    onDelete: (arg0: string[], arg1: string, arg2: string) => void;
-    onToggleEdit: (arg0: string[], arg1: string) => void;
-    onUpdateName: (arg0: string[], arg1: string, arg2: string) => void;
-    onUpdateBody: (arg0: string[], arg1: string, arg2: string) => void;
-    onAdd: (arg0: string[], arg1: string, arg2: string) => void;
-    onToggleExpand: (arg0: string[], arg1: string) => void;
-    onSelectFile: (arg0: string, arg1: string[], arg2: string) => void;
+  folder: FolderType;
+  paddingLeft: number;
+  onDelete: (arg0: string[], arg1: string, arg2: string) => void;
+  onToggleEdit: (arg0: string[], arg1: string) => void;
+  onUpdateName: (arg0: string[], arg1: string, arg2: string) => void;
+  onUpdateBody: (arg0: string[], arg1: string, arg2: string) => void;
+  onAdd: (arg0: string[], arg1: string, arg2: string) => void;
+  onToggleExpand: (arg0: string[], arg1: string) => void;
+  onSelectFile: (arg0: string, arg1: string[], arg2: string) => void;
 };
 
 const isFolder = (item: FolderType | FileType): item is FolderType => {
-    return (item as FolderType).isExpand !== undefined;
+  return (item as FolderType).isExpand !== undefined;
 };
 
 const FolderTab = ({ folder, paddingLeft, onUpdateName, onUpdateBody, onToggleExpand, onToggleEdit, onAdd, onDelete, onSelectFile }: FolderTabProps) => {
-    const [isHover, setIsHover] = useState(false);
-    const [newName, setNewName] = useState(folder.name);
-    return (
-        <>
-            <div
-                className="folder-tab"
-                style={{ paddingLeft: `${paddingLeft}rem` }}
-                onMouseOver={() => setIsHover(true)}
-                onMouseOut={() => setIsHover(false)}
-                // onDoubleClick={() => setEditing(true)}
+  const [isHover, setIsHover] = useState(false);
+  const [newName, setNewName] = useState(folder.name);
+  return (
+    <>
+      <div className="folder-tab" style={{ paddingLeft: `${paddingLeft}rem` }} onMouseOver={() => setIsHover(true)} onMouseOut={() => setIsHover(false)}>
+        {folder.isEditingName ? (
+          <>
+            <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} />
+            <button
+              onClick={() => {
+                onToggleEdit(folder.parentFolderIds, folder.id);
+                onUpdateName(folder.parentFolderIds, folder.id, newName);
+              }}
             >
-                {folder.isEditingName ? (
-                    <>
-                        <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} />
-                        <button
-                            onClick={() => {
-                                onToggleEdit(folder.parentFolderIds, folder.id);
-                                onUpdateName(folder.parentFolderIds, folder.id, newName);
-                                // setEditing(false);
-                            }}
-                        >
-                            Save
-                        </button>
-                    </>
-                ) : (
-                    <>
-                        <p>
-                            {folder.isExpand ? (
-                                <i className="fa-solid fa-chevron-down" onClick={() => onToggleExpand(folder.parentFolderIds, folder.id)}></i>
-                            ) : (
-                                <i className="fa-solid fa-chevron-right" onClick={() => onToggleExpand(folder.parentFolderIds, folder.id)}></i>
-                            )}
-                            {folder.name}
-                        </p>
-                        {isHover && (
-                            <>
-                                <button onClick={() => onAdd(folder.parentFolderIds, folder.id, 'File')}>
-                                    <i className="fa-solid fa-file"></i>
-                                </button>
-                                <button onClick={() => onAdd(folder.parentFolderIds, folder.id, 'Folder')}>
-                                    <i className="fa-solid fa-folder"></i>
-                                </button>
-                                <button onClick={() => onToggleEdit(folder.parentFolderIds, folder.id)}>
-                                    <i className="fa-solid fa-pen"></i>
-                                </button>
-                                <button onClick={() => onDelete(folder.parentFolderIds, folder.id, 'folder')}>
-                                    <i className="fa-solid fa-trash-can"></i>
-                                </button>
-                            </>
-                        )}
-                    </>
-                )}
-            </div>
-            {folder.items.map((item) => {
-                if (isFolder(item)) {
-                    if (folder.isExpand) {
-                        return (
-                            <FolderTab
-                                key={item.id}
-                                folder={item}
-                                paddingLeft={paddingLeft + 1}
-                                onToggleExpand={onToggleExpand}
-                                onUpdateName={onUpdateName}
-                                onUpdateBody={onUpdateBody}
-                                onToggleEdit={onToggleEdit}
-                                onAdd={onAdd}
-                                onDelete={onDelete}
-                                onSelectFile={onSelectFile}
-                            />
-                        );
-                    }
-                } else {
-                    if (folder.isExpand) {
-                        return (
-                            <FileTab
-                                key={item.id}
-                                file={item}
-                                paddingLeft={paddingLeft + 1}
-                                onDelete={onDelete}
-                                onToggleEdit={onToggleEdit}
-                                onUpdateName={onUpdateName}
-                                onUpdateBody={onUpdateBody}
-                                onSelectFile={onSelectFile}
-                            />
-                        );
-                    }
-                }
-            })}
-        </>
-    );
+              Save
+            </button>
+          </>
+        ) : (
+          <>
+            <p>
+              {folder.isExpand ? (
+                <IconChevronDown onClick={() => onToggleExpand(folder.parentFolderIds, folder.id)} />
+              ) : (
+                <IconChevronRight onClick={() => onToggleExpand(folder.parentFolderIds, folder.id)} />
+              )}
+              {folder.name}
+            </p>
+            {isHover && (
+              <>
+                <ActionIcon color="primary" variant="light" onClick={() => onAdd(folder.parentFolderIds, folder.id, 'File')}>
+                  <IconFileFilled />
+                </ActionIcon>
+                <ActionIcon color="primary" variant="light" onClick={() => onAdd(folder.parentFolderIds, folder.id, 'Folder')}>
+                  <IconFolderFilled />
+                </ActionIcon>
+                <ActionIcon color="primary" variant="light" onClick={() => onToggleEdit(folder.parentFolderIds, folder.id)}>
+                  <IconEdit />
+                </ActionIcon>
+                <ActionIcon color="primary" variant="light" onClick={() => onDelete(folder.parentFolderIds, folder.id, 'folder')}>
+                  <IconTrashFilled />
+                </ActionIcon>
+              </>
+            )}
+          </>
+        )}
+      </div>
+      {folder.items.map((item) => {
+        if (isFolder(item)) {
+          if (folder.isExpand) {
+            return (
+              <FolderTab
+                key={item.id}
+                folder={item}
+                paddingLeft={paddingLeft + 1}
+                onToggleExpand={onToggleExpand}
+                onUpdateName={onUpdateName}
+                onUpdateBody={onUpdateBody}
+                onToggleEdit={onToggleEdit}
+                onAdd={onAdd}
+                onDelete={onDelete}
+                onSelectFile={onSelectFile}
+              />
+            );
+          }
+        } else {
+          if (folder.isExpand) {
+            return (
+              <FileTab
+                key={item.id}
+                file={item}
+                paddingLeft={paddingLeft + 1}
+                onDelete={onDelete}
+                onToggleEdit={onToggleEdit}
+                onUpdateName={onUpdateName}
+                onUpdateBody={onUpdateBody}
+                onSelectFile={onSelectFile}
+              />
+            );
+          }
+        }
+      })}
+    </>
+  );
 };
 
 export default FolderTab;

@@ -1,38 +1,79 @@
+// React
 import { useState } from 'react';
-import axios from 'axios';
 
-type FormProps = {
-    email: string;
-    password: string;
-};
+// Mantine
+import { useMantineTheme, Button, Stack, TextInput, Text, Title, Anchor } from '@mantine/core';
+
+// Third-party packages
+import axios from 'axios';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+
+axios.defaults.withCredentials = true;
 
 const LoginPage = () => {
-    const [form, setForm] = useState<FormProps>({ email: '', password: '' });
+  // useState
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoginFail, setIsLoginFail] = useState(false);
+  const [isServerError, setIsServerError] = useState(false);
 
-    const handleChange = (input: any) => {
-        setForm({ ...form, [input.name]: input.value });
-    };
+  // React Router hooks
+  const navigate = useNavigate(); // For redirecting to a different page on the front-end
+  const [searchParams, setSearchParams] = useSearchParams(); // For extracting the query params from the URL
+  console.log('SEARCH PARAMS');
 
-    const handleSubmit = async (e: any) => {
-        e.preventDefault();
-        try {
-            const response = await axios.post(`http://localhost:3000/getUser`, form);
-            console.log(response);
-        } catch (error) {
-            console.error(error);
-        }
-    };
+  const theme = useMantineTheme();
 
-    return (
-        <div id="login-page">
-            <h1>Login</h1>
-            <form>
-                <input type="email" id="email" name="email" placeholder="Email" value={form.email} onChange={(e) => handleChange(e.target)} />
-                <input type="password" id="password" name="password" placeholder="Password" value={form.password} onChange={(e) => handleChange(e.target)} />
-                <button type="submit">Login</button>
-            </form>
-        </div>
-    );
+  const handleSubmitForm = async () => {
+    try {
+      const res = await axios({ method: 'post', url: 'http://localhost:3000/loginUser', data: { username, password }, withCredentials: true });
+      if (res.data.username) {
+        navigate('/');
+      } else {
+        setIsLoginFail(true);
+        setIsServerError(false);
+      }
+    } catch (err) {
+      setIsLoginFail(false);
+      setIsLoginFail(true);
+    }
+  };
+
+  return (
+    <>
+      <Stack w="400" mx="auto" mt="30">
+        {searchParams.get('success') && (
+          <Text size="sm" fw="bold" c="green">
+            Account successfully created! You may now log in.
+          </Text>
+        )}
+        <Title>Sign into your account.</Title>
+        <Text size="xs" c="gray">
+          (Authentication works, but you cannot save any files yet.)
+        </Text>
+
+        <TextInput label="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
+        <TextInput label="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        {isLoginFail && (
+          <Text c="red" size="xs">
+            Username or password is incorrect.
+          </Text>
+        )}
+        {isServerError && (
+          <Text c="red" size="xs">
+            A server error occurred. Please try again.
+          </Text>
+        )}
+        <Button onClick={handleSubmitForm}>Log In</Button>
+        <Text size="sm" ta="center">
+          Don't have an account? <Anchor onClick={() => navigate('/register')}>Create one here.</Anchor>
+        </Text>
+        <Text size="sm" ta="center">
+          <Anchor onClick={() => navigate('/')}>Home</Anchor>
+        </Text>
+      </Stack>
+    </>
+  );
 };
 
 export default LoginPage;
