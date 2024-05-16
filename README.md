@@ -33,6 +33,10 @@ Users can download a text file as a Portable Document Format.
 
 Much like an IDE, users will be able to customise parts of the interface such as the editor and viewer fonts. The program will also feature light and dark modes.
 
+### New UI
+
+The entire user interface will be redone. Instead of using my own custom CSS, I will be using the [Mantine](https://mantine.dev/) component library. I will also be using [Tabler](https://tabler.io/icons) for the icons. This will result in a much nicer interface, with better responsiveness and better accessibility.
+
 
 ## :package: More Features
 
