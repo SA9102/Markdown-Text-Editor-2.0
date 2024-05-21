@@ -37,29 +37,6 @@ const strategy = new LocalStrategy(customFields, verifyCallback);
 
 passport.use(strategy);
 
-// module.exports = passport.use(
-//   new LocalStrategy((username, password, done) => {
-//     User.findOne({ username: username })
-//       .then((user) => {
-//         if (!user) {
-//           return done(null, false);
-//         }
-//         const isValid = validatePassword(password, user.password, user.salt);
-
-//         if (isValid) {
-//           console.log('IS VALID');
-//           return done(null, user);
-//         } else {
-//           console.log('IS NOT VALID');
-//           return done(null, false);
-//         }
-//       })
-//       .catch((err) => {
-//         done(err);
-//       });
-//   })
-// );
-
 passport.serializeUser((user, done) => {
   console.log('IN SERIALIZE USER');
   done(null, user.id);

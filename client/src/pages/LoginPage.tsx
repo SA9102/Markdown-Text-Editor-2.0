@@ -2,7 +2,7 @@
 import { useState } from 'react';
 
 // Mantine
-import { useMantineTheme, Button, Stack, TextInput, Text, Title, Anchor } from '@mantine/core';
+import { useMantineTheme, Button, Stack, TextInput, Text, Title, Anchor, PasswordInput } from '@mantine/core';
 
 // Third-party packages
 import axios from 'axios';
@@ -53,7 +53,7 @@ const LoginPage = () => {
         </Text>
 
         <TextInput label="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
-        <TextInput label="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <PasswordInput label="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
         {isLoginFail && (
           <Text c="red" size="xs">
             Username or password is incorrect.

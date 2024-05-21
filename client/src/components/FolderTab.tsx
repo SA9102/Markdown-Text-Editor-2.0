@@ -9,7 +9,7 @@ import FolderType from '../types/FolderType';
 import FileType from '../types/FileType';
 
 // Mantine
-import { ActionIcon } from '@mantine/core';
+import { ActionIcon, Group } from '@mantine/core';
 
 // Tabler icons
 import { IconChevronDown, IconChevronRight, IconFolderFilled, IconFileFilled, IconTrashFilled, IconEdit } from '@tabler/icons-react';
@@ -20,22 +20,22 @@ type FolderTabProps = {
   onDelete: (arg0: string[], arg1: string, arg2: string) => void;
   onToggleEdit: (arg0: string[], arg1: string) => void;
   onUpdateName: (arg0: string[], arg1: string, arg2: string) => void;
-  onUpdateBody: (arg0: string[], arg1: string, arg2: string) => void;
   onAdd: (arg0: string[], arg1: string, arg2: string) => void;
   onToggleExpand: (arg0: string[], arg1: string) => void;
   onSelectFile: (arg0: string, arg1: string[], arg2: string) => void;
+  onAddFileTab: (arg0: string, arg1: string, arg2: string[]) => void;
 };
 
 const isFolder = (item: FolderType | FileType): item is FolderType => {
   return (item as FolderType).isExpand !== undefined;
 };
 
-const FolderTab = ({ folder, paddingLeft, onUpdateName, onUpdateBody, onToggleExpand, onToggleEdit, onAdd, onDelete, onSelectFile }: FolderTabProps) => {
+const FolderTab = ({ folder, paddingLeft, onUpdateName, onToggleExpand, onToggleEdit, onAddFileTab, onAdd, onDelete, onSelectFile }: FolderTabProps) => {
   const [isHover, setIsHover] = useState(false);
   const [newName, setNewName] = useState(folder.name);
   return (
     <>
-      <div className="folder-tab" style={{ paddingLeft: `${paddingLeft}rem` }} onMouseOver={() => setIsHover(true)} onMouseOut={() => setIsHover(false)}>
+      <Group className="folder-tab" style={{ paddingLeft: `${paddingLeft}rem` }} onMouseOver={() => setIsHover(true)} onMouseOut={() => setIsHover(false)}>
         {folder.isEditingName ? (
           <>
             <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} />
@@ -76,7 +76,7 @@ const FolderTab = ({ folder, paddingLeft, onUpdateName, onUpdateBody, onToggleEx
             )}
           </>
         )}
-      </div>
+      </Group>
       {folder.items.map((item) => {
         if (isFolder(item)) {
           if (folder.isExpand) {
@@ -87,8 +87,8 @@ const FolderTab = ({ folder, paddingLeft, onUpdateName, onUpdateBody, onToggleEx
                 paddingLeft={paddingLeft + 1}
                 onToggleExpand={onToggleExpand}
                 onUpdateName={onUpdateName}
-                onUpdateBody={onUpdateBody}
                 onToggleEdit={onToggleEdit}
+                onAddFileTab={onAddFileTab}
                 onAdd={onAdd}
                 onDelete={onDelete}
                 onSelectFile={onSelectFile}
@@ -105,7 +105,7 @@ const FolderTab = ({ folder, paddingLeft, onUpdateName, onUpdateBody, onToggleEx
                 onDelete={onDelete}
                 onToggleEdit={onToggleEdit}
                 onUpdateName={onUpdateName}
-                onUpdateBody={onUpdateBody}
+                onAddFileTab={onAddFileTab}
                 onSelectFile={onSelectFile}
               />
             );

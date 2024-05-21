@@ -11,13 +11,13 @@ import { MantineProvider, createTheme, virtualColor } from '@mantine/core';
 axios.defaults.withCredentials = true;
 
 const theme = createTheme({
-  colors: {
-    primary: virtualColor({
-      name: 'primary',
-      light: 'indigo',
-      dark: 'orange',
-    }),
-  },
+  // colors: {
+  //   primary: virtualColor({
+  //     name: 'primary',
+  //     light: 'indigo',
+  //     dark: 'orange',
+  //   }),
+  // },
   defaultRadius: 'sm',
 });
 

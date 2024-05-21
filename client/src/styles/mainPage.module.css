@@ -1,0 +1,5 @@
+.btn {
+  @media (max-width: $mantine-breakpoint-sm) {
+    background-color: red;
+  }
+}

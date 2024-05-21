@@ -71,15 +71,6 @@ const RegisterPage = () => {
 
   return (
     <>
-      <label>Username</label>
-      <input type="text" name="username" value={username} onChange={(e) => setUsername(e.target.value)} />
-      <label>Password</label>
-      <input type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-      <label>Confirm Password</label>
-      <input type="password" name="confirm-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-      <button type="submit" onClick={handleSubmitForm}>
-        Register
-      </button>
       <Stack w="400" mx="auto" mt="30">
         <Title>Create an account.</Title>
         <Text size="xs" c="gray">
