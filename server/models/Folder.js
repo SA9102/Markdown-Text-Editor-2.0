@@ -1,32 +1,32 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const FileSchema = require("./File");
 
 const FolderSchema = new mongoose.Schema(
-    {
-        name: {
-            type: String,
-            required: true,
-        },
-        subfolders: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Folder',
-                required: false,
-            },
-        ],
-        files: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'File',
-                required: false,
-            },
-        ],
-        user: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
-        },
+  {
+    // folderId: {
+    //   type: String,
+    //   required: true,
+    // },
+    // name: {
+    //   type: String,
+    //   required: true,
+    // },
+    // items: [
+    //   {
+    //     type: String,
+    //     refPath: 'items.kind',
+    //   },
+    // ],
+    data: {
+      type: String,
     },
-    { timestamps: true }
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+  },
+  { timestamps: true }
 );
 
-module.exports = mongoose.model('Folder', FolderSchema);
+module.exports = mongoose.model("Folder", FolderSchema);

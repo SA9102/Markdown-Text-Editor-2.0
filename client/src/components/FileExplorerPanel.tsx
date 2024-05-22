@@ -1,11 +1,11 @@
 // Custom components
-import FolderTab from './FolderTab';
-import FileTab from './FileTab';
+import FolderTab from "./FolderTab";
+import FileTab from "./FileTab";
 
 // Types
-import FileAndFolderTreeType from '../types/FileAndFolderTreeType';
-import FolderType from '../types/FolderType';
-import FileType from '../types/FileType';
+import FileAndFolderTreeType from "../types/FileAndFolderTreeType";
+import FolderType from "../types/FolderType";
+import FileType from "../types/FileType";
 
 type FileExplorerPanelProps = {
   data: FileAndFolderTreeType;
@@ -41,7 +41,7 @@ const FileExplorerPanel = ({ data, onToggleExpand, onUpdateName, onAddFileTab, o
               onSelectFile={onSelectFile}
             />
           );
-        } else if (item.type === 'File') {
+        } else if (item.type === "File") {
           return (
             <FileTab key={item.id} file={item} paddingLeft={1} onDelete={onDelete} onToggleEdit={onToggleEdit} onUpdateName={onUpdateName} onAddFileTab={onAddFileTab} onSelectFile={onSelectFile} />
           );

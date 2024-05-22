@@ -1,18 +1,18 @@
 // React
-import { useState } from 'react';
+import { useState } from "react";
 
 // Third-party packages
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 // import { Button, TextInput } from '@mantine/core';
-import { PasswordInput, Text, Anchor, Stack, TextInput, Title, Button } from '@mantine/core';
+import { PasswordInput, Text, Anchor, Stack, TextInput, Title, Button } from "@mantine/core";
 
 const RegisterPage = () => {
   // useState
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isServerError, setIsServerError] = useState(false);
   const [isUsernameTaken, setIsUsernameTaken] = useState(false);
   const [isInvalidUsername, setIsInvalidUsername] = useState(false);
@@ -56,10 +56,10 @@ const RegisterPage = () => {
     // If the credentials are valid, send them to the server
     try {
       setIsServerError(false);
-      const res = await axios({ method: 'post', url: 'http://localhost:3000/registerUser', data: { username, password } });
+      const res = await axios({ method: "post", url: "http://localhost:3000/registerUser", data: { username, password } });
       console.log(res);
       if (res.data.success) {
-        navigate('/login?success=true');
+        navigate("/login?success=true");
       } else {
         setIsUsernameTaken(true);
       }
@@ -78,15 +78,15 @@ const RegisterPage = () => {
         </Text>
         <TextInput
           label="Username"
-          error={isInvalidUsername ? 'Invalid username.' : isUsernameTaken ? 'Username already taken.' : ''}
+          error={isInvalidUsername ? "Invalid username." : isUsernameTaken ? "Username already taken." : ""}
           name="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        <PasswordInput label="Password" error={isInvalidPassword ? 'Invalid password.' : ''} name="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <PasswordInput label="Password" error={isInvalidPassword ? "Invalid password." : ""} name="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         <PasswordInput
           label="Confirm Password"
-          error={isPasswordMismatch ? "Passwords don't match." : ''}
+          error={isPasswordMismatch ? "Passwords don't match." : ""}
           name="confirm-password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
@@ -98,10 +98,10 @@ const RegisterPage = () => {
         )}
         <Button onClick={handleSubmitForm}>Register</Button>
         <Text size="sm" ta="center">
-          Already have an account? <Anchor onClick={() => navigate('/login')}>Sign in here.</Anchor>
+          Already have an account? <Anchor onClick={() => navigate("/login")}>Sign in here.</Anchor>
         </Text>
         <Text size="sm" ta="center">
-          <Anchor onClick={() => navigate('/')}>Home</Anchor>
+          <Anchor onClick={() => navigate("/")}>Home</Anchor>
         </Text>
       </Stack>
     </>

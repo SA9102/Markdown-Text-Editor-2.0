@@ -1,33 +1,36 @@
 // React
-import { useState, useEffect, useReducer } from 'react';
+import { useState, useEffect, useReducer } from "react";
 
 // Mantine
-import { Button, ActionIcon, Tooltip, Group } from '@mantine/core';
+import { Button, ActionIcon, Tooltip, Group } from "@mantine/core";
 
 // Tabler Icons
-import { IconFolderFilled, IconFileFilled, IconUserPlus, IconLogin2 } from '@tabler/icons-react';
+import { IconFolderFilled, IconFileFilled, IconUserPlus, IconLogin2 } from "@tabler/icons-react";
 
 // Other third-party packages
-import { produce } from 'immer';
-import { v4 as uuidv4 } from 'uuid';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { produce } from "immer";
+import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { BSON, EJSON } from "bson";
 
 // Types
-import FolderType from '../types/FolderType';
-import FileType from '../types/FileType';
+import FolderType from "../types/FolderType";
+import FileType from "../types/FileType";
 
 // Component imports
-import MarkdownEditor from '../componentsNew/MarkdownEditor';
-import MarkdownViewer from '../componentsNew/MarkdownViewer';
-import FileExplorerPanel from '../components/FileExplorerPanel';
+import MarkdownEditor from "../componentsNew/MarkdownEditor";
+import MarkdownViewer from "../componentsNew/MarkdownViewer";
+import FileExplorerPanel from "../components/FileExplorerPanel";
 
 // CSS
-import styles from '../styles/mainPage.module.css';
+import styles from "../styles/mainPage.module.css";
 
-import testData from '../testData';
+import testData from "../testData";
+import FileAndFolderTreeType from "../types/FileAndFolderTreeType";
 
 const enum ACTIONS {
+  SET_DATA,
   ADD_ITEM,
   UPDATE_ITEM_NAME,
   EDIT_ITEM,
@@ -52,9 +55,9 @@ type RecentFileTabType = {
 const MainPage = () => {
   // Returns the current full date and time.
   const getCurrentDateAndTime = () => {
-    return new Date().toLocaleString('default', {
-      dateStyle: 'full',
-      timeStyle: 'long',
+    return new Date().toLocaleString("default", {
+      dateStyle: "full",
+      timeStyle: "long",
     });
   }; // END getCurrentDateAndTime
 
@@ -73,21 +76,26 @@ const MainPage = () => {
   // Only when the user clicks 'save' will all the edited files be saved into the main 'data' state
   const [editedFiles, setEditedFiles] = useState<EditedFilesType[]>([]);
 
-  const [textEditor, setTextEditor] = useState<string>(''); // The text of the currently selected file, displayed in the Markdown editor
+  const [textEditor, setTextEditor] = useState<string>(""); // The text of the currently selected file, displayed in the Markdown editor
   const [fileExplorerOpen, setFileExplorerOpen] = useState(true);
   const [editorAndViewer, setEditorAndViewer] = useState(true);
   const [recentFileTabs, setRecentFileTabs] = useState<RecentFileTabType[]>([]); // Stores the ids of file tabs
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Keep track of whether or not the user is logged in
 
-  // const [selectedFile, setSelectedFile] = useState('-1')
-  // const [selectedFileBody, setSelectedFileBody] = useState<string>('')
-  // const [isLoggedIn, setIsLoggedIn] = useState(false)
-
   useEffect(() => {
-    axios({ method: 'get', url: 'http://localhost:3000/getUser' })
+    axios({ method: "get", url: "http://localhost:3000/getUser" })
       .then((res) => {
-        if (res.data.username) {
+        if (res.data.user) {
           setIsLoggedIn(true);
+          setSelectedFile(null);
+          setTextEditor("");
+          setEditedFiles([]);
+          setRecentFileTabs([]);
+          if (res.data.data) {
+            dispatch({ type: ACTIONS.SET_DATA, payload: { fetchedData: JSON.parse(res.data.data) } });
+          } else {
+            dispatch({ type: ACTIONS.SET_DATA, payload: { fetchedData: [] } });
+          }
         }
       })
       .catch((err) => {
@@ -98,33 +106,29 @@ const MainPage = () => {
   const [data, dispatch] = useReducer(
     produce((draft, action) => {
       switch (action.type) {
+        case ACTIONS.SET_DATA:
+          draft = action.payload.fetchedData;
+          return action.payload.fetchedData;
+
         case ACTIONS.ADD_ITEM:
           if (action.payload.idChain === null) {
-            if (action.payload.itemType === 'Folder') {
+            if (action.payload.itemType === "Folder") {
               draft.unshift({
                 id: uuidv4(),
                 parentFolderIds: [],
-                type: 'Folder',
-                name: '',
+                type: "Folder",
+                name: "",
                 isExpand: true,
                 isEditingName: true,
                 items: [],
               });
-            } else if (action.payload.itemType === 'File') {
-              // const currentNotes = localStorage.getItem('files');
-              // const id = uuidv4();
-              // if (currentNotes) {
-              // const currentNotesObj = JSON.parse(currentNotes);
-              // console.log('ADD ITEM', currentNotesObj);
-              // currentNotesObj.push({ id: id, parentFolderIds: [], body: '' });
-              // localStorage.setItem('files', JSON.stringify(currentNotesObj));
-              // }
+            } else if (action.payload.itemType === "File") {
               draft.unshift({
                 id: uuidv4(),
                 parentFolderIds: [],
-                type: 'File',
-                name: '',
-                body: '',
+                type: "File",
+                name: "",
+                body: "",
                 isSelected: false,
                 isEditingName: true,
               });
@@ -135,34 +139,27 @@ const MainPage = () => {
             }
             draft = draft.find((folder: FolderType) => folder.id === action.payload.targetItemId);
             draft.expand = true;
-            if (action.payload.itemType === 'Folder') {
+            if (action.payload.itemType === "Folder") {
               draft.items = [
                 {
                   id: uuidv4(),
                   parentFolderIds: [...action.payload.idChain, action.payload.targetItemId],
-                  type: 'Folder',
-                  name: '',
+                  type: "Folder",
+                  name: "",
                   isExpand: false,
                   isEditingName: true,
                   items: [],
                 },
                 ...draft.items,
               ];
-            } else if (action.payload.itemType === 'File') {
-              // const currentNotes = localStorage.getItem('files');
-              // const id = uuidv4();
-              // if (currentNotes) {
-              //   const currentNotesObj = JSON.parse(currentNotes);
-              //   currentNotesObj.push({ id: id, parentFolderIds: [...action.payload.idChain, action.payload.targetItemId], body: '' });
-              //   localStorage.setItem('files', JSON.stringify(currentNotesObj));
-              // }
+            } else if (action.payload.itemType === "File") {
               draft.items = [
                 {
                   id: uuidv4(),
                   parentFolderIds: [...action.payload.idChain, action.payload.targetItemId],
-                  type: 'File',
-                  name: '',
-                  body: '',
+                  type: "File",
+                  name: "",
+                  body: "",
                   isSelected: false,
                   isEditingName: true,
                 },
@@ -217,14 +214,11 @@ const MainPage = () => {
           // }
 
           // If a folder is deleted, then we want to remove any files contained in this folder from 'editedFiles' and 'recentFileTabs'
-          if (action.payload.itemType === 'folder') {
-            console.log('IS FOLDER');
+          if (action.payload.itemType === "folder") {
             setEditedFiles(
               editedFiles.filter((fileData: EditedFilesType) => {
                 if (!fileData[1].includes(action.payload.targetItemId)) {
                   return fileData;
-                } else {
-                  console.log('OKK');
                 }
               })
             );
@@ -232,8 +226,6 @@ const MainPage = () => {
               recentFileTabs.filter((fileData: RecentFileTabType) => {
                 if (!fileData.parentFolderIds.includes(action.payload.targetItemId)) {
                   return fileData;
-                } else {
-                  console.log('FOUND');
                 }
               })
             );
@@ -241,11 +233,11 @@ const MainPage = () => {
             // If the currently selected file is contained within this deleted folder, then we want to deselect this file
             if (selectedFile?.parentFolderIds.includes(action.payload.targetItemId)) {
               setSelectedFile(null);
-              setTextEditor('');
+              setTextEditor("");
             }
 
             // If a file is deleted, then we want to remove this file from 'editedFiles' and 'recentFileTabs
-          } else if (action.payload.itemType === 'file') {
+          } else if (action.payload.itemType === "file") {
             setEditedFiles(
               editedFiles.filter((fileData: EditedFilesType) => {
                 if (fileData[0] !== action.payload.targetItemId) {
@@ -263,7 +255,7 @@ const MainPage = () => {
             // If the currently selected file is deleted, then we want to deselect this file.
             if (action.payload.targetItemId === selectedFile?.id) {
               setSelectedFile(null);
-              setTextEditor('');
+              setTextEditor("");
             }
           }
 
@@ -317,7 +309,6 @@ const MainPage = () => {
     const newRecentFileTabs = [...recentFileTabs];
     const existingFile = newRecentFileTabs.find((file) => file.id === targetItemId);
     if (existingFile) {
-      console.log('THE FILE EXISTS');
       existingFile.name = newItemName;
       setRecentFileTabs(newRecentFileTabs);
     }
@@ -425,28 +416,83 @@ const MainPage = () => {
   Handles the saving of edited files to the main 'data' state. This occurs when the user manually clicks on 'save'
   */
   const handleSaveFilesToState = () => {
-    for (let fileData of editedFiles) {
-      console.log('OK');
+    let editedFilesCopy = [...editedFiles];
+    if (selectedFile) {
+      // setEditedFiles((prev) =>
+      //   prev.map((fileData) => {
+      //     if (fileData[0] === selectedFile.id) {
+      //       fileData[2] = textEditor;
+      //     }
+      //     return fileData;
+      //   })
+      // );
+
+      editedFilesCopy = editedFiles.map((fileData) => {
+        if (fileData[0] === selectedFile.id) {
+          fileData[2] = textEditor;
+        }
+        return fileData;
+      });
+
+      setEditedFiles(editedFilesCopy);
+    }
+    for (let fileData of editedFilesCopy) {
       dispatch({ type: ACTIONS.UPDATE_FILE_BODY, payload: { targetItemId: fileData[0], idChain: fileData[1], targetItemBody: fileData[2] } });
     }
   };
 
   const logout = async () => {
     try {
-      const res = await axios({ method: 'get', url: 'http://localhost:3000/logout' });
+      const res = await axios({ method: "get", url: "http://localhost:3000/logout" });
       setIsLoggedIn(false);
+      setSelectedFile(null);
+      setTextEditor("");
+      setEditedFiles([]);
+      setRecentFileTabs([]);
+      dispatch({ type: ACTIONS.SET_DATA, payload: { fetchedData: [] } });
     } catch (err) {
       console.log(err);
     }
   };
 
+  let folders = [];
+  let files = [];
+
+  const recGetFilesAndFolders = (data: FileAndFolderTreeType) => {
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].type === "Folder") {
+        // let o = { id: data[i].id, name: data[i].name, parentFolderIds: data[i].parentFolderIds };
+        folders.push({ id: data[i].id, name: data[i].name, parentFolderIds: data[i].parentFolderIds });
+        recGetFilesAndFolders(data[i].items);
+      } else if (data[i].type === "File") {
+        files.push({ id: data[i].id, name: data[i].name, body: data[i].body, parentFolderIds: data[i].parentFolderIds });
+      }
+    }
+  };
+
   const handleSaveToDB = async () => {
     try {
-      console.log('Saving data to DB ...');
-      const res = await axios({ method: 'post', url: 'http://localhost:3000/saveData', data: { allData: data } });
+      const res = await axios({ method: "post", url: "http://localhost:3000/saveData", data: { data: JSON.stringify(data) } });
       console.log(res);
     } catch (err) {
-      console.log('There was an error in saving data to DB');
+      console.log(err);
+    }
+  };
+
+  const handleFetchDataFromDB = async () => {
+    try {
+      const res = await axios({ method: "get", url: "http://localhost:3000/getData" });
+      console.log(res);
+      if (res.data.data) {
+        setSelectedFile(null);
+        setTextEditor("");
+        setEditedFiles([]);
+        setRecentFileTabs([]);
+        dispatch({ type: ACTIONS.SET_DATA, payload: { fetchedData: JSON.parse(res.data.data) } });
+        // setRefresh(!refresh);
+      }
+    } catch (err) {
+      console.log("There was an error in fetching data from DB");
       console.log(err);
     }
   };
@@ -465,14 +511,15 @@ const MainPage = () => {
           <Button variant="filled" onClick={handleSaveToDB}>
             Save To DB
           </Button>
+          <Button onClick={handleFetchDataFromDB}>Get Data</Button>
         </Group>
       ) : (
         // Show the 'login' and 'register' buttons if the user is not logged in
         <Group>
-          <Button color="green" size="xs" leftSection={<IconLogin2 />} onClick={() => navigate('/login')}>
+          <Button color="green" size="xs" leftSection={<IconLogin2 />} onClick={() => navigate("/login")}>
             Log In
           </Button>
-          <Button color="orange" size="xs" leftSection={<IconUserPlus />} onClick={() => navigate('/register')}>
+          <Button color="orange" size="xs" leftSection={<IconUserPlus />} onClick={() => navigate("/register")}>
             Register
           </Button>
         </Group>
@@ -485,12 +532,12 @@ const MainPage = () => {
           <div id="toolbar">
             <Tooltip.Group openDelay={600} closeDelay={100}>
               <Tooltip label="New File" withArrow arrowSize={5}>
-                <ActionIcon size="lg" variant="subtle" onClick={() => handleAddItem(null, null, 'File')}>
+                <ActionIcon size="lg" variant="subtle" onClick={() => handleAddItem(null, null, "File")}>
                   <IconFileFilled />
                 </ActionIcon>
               </Tooltip>
               <Tooltip label="New Folder" withArrow arrowSize={5}>
-                <ActionIcon size="lg" variant="subtle" onClick={() => handleAddItem(null, null, 'Folder')}>
+                <ActionIcon size="lg" variant="subtle" onClick={() => handleAddItem(null, null, "Folder")}>
                   <IconFolderFilled />
                 </ActionIcon>
               </Tooltip>

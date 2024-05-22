@@ -1,15 +1,15 @@
-import Markdown from 'marked-react';
+import Markdown from "marked-react";
 
 type MarkdownViewerProps = {
-    body: string;
+  body: string;
 };
 
 const MarkdownViewer = ({ body }: MarkdownViewerProps) => {
-    return (
-        <div className="markdown-viewer">
-            <Markdown>{body}</Markdown>
-        </div>
-    );
+  return (
+    <div className="markdown-viewer">
+      <Markdown>{body}</Markdown>
+    </div>
+  );
 };
 
 export default MarkdownViewer;

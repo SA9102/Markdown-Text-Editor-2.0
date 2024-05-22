@@ -1,8 +1,8 @@
 // React
-import { useState } from 'react';
+import { useState } from "react";
 
 // Types
-import FileType from '../types/FileType';
+import FileType from "../types/FileType";
 
 type FileTabProps = {
   file: FileType;
@@ -51,7 +51,7 @@ const FileTab = ({ file, paddingLeft, onDelete, onToggleEdit, onAddFileTab, onUp
               <button onClick={() => onToggleEdit(file.parentFolderIds, file.id)}>
                 <i className="fa-solid fa-pen"></i>
               </button>
-              <button onClick={() => onDelete(file.parentFolderIds, file.id, 'file')}>
+              <button onClick={() => onDelete(file.parentFolderIds, file.id, "file")}>
                 <i className="fa-solid fa-trash-can"></i>
               </button>
             </>

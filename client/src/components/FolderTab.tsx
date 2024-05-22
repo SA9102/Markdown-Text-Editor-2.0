@@ -1,18 +1,18 @@
 // React
-import { useState } from 'react';
+import { useState } from "react";
 
 // Custom components
-import FileTab from './FileTab';
+import FileTab from "./FileTab";
 
 // Types
-import FolderType from '../types/FolderType';
-import FileType from '../types/FileType';
+import FolderType from "../types/FolderType";
+import FileType from "../types/FileType";
 
 // Mantine
-import { ActionIcon, Group } from '@mantine/core';
+import { ActionIcon, Group } from "@mantine/core";
 
 // Tabler icons
-import { IconChevronDown, IconChevronRight, IconFolderFilled, IconFileFilled, IconTrashFilled, IconEdit } from '@tabler/icons-react';
+import { IconChevronDown, IconChevronRight, IconFolderFilled, IconFileFilled, IconTrashFilled, IconEdit } from "@tabler/icons-react";
 
 type FolderTabProps = {
   folder: FolderType;
@@ -60,16 +60,16 @@ const FolderTab = ({ folder, paddingLeft, onUpdateName, onToggleExpand, onToggle
             </p>
             {isHover && (
               <>
-                <ActionIcon color="primary" variant="light" onClick={() => onAdd(folder.parentFolderIds, folder.id, 'File')}>
+                <ActionIcon color="primary" variant="light" onClick={() => onAdd(folder.parentFolderIds, folder.id, "File")}>
                   <IconFileFilled />
                 </ActionIcon>
-                <ActionIcon color="primary" variant="light" onClick={() => onAdd(folder.parentFolderIds, folder.id, 'Folder')}>
+                <ActionIcon color="primary" variant="light" onClick={() => onAdd(folder.parentFolderIds, folder.id, "Folder")}>
                   <IconFolderFilled />
                 </ActionIcon>
                 <ActionIcon color="primary" variant="light" onClick={() => onToggleEdit(folder.parentFolderIds, folder.id)}>
                   <IconEdit />
                 </ActionIcon>
-                <ActionIcon color="primary" variant="light" onClick={() => onDelete(folder.parentFolderIds, folder.id, 'folder')}>
+                <ActionIcon color="primary" variant="light" onClick={() => onDelete(folder.parentFolderIds, folder.id, "folder")}>
                   <IconTrashFilled />
                 </ActionIcon>
               </>
