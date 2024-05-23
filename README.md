@@ -36,15 +36,15 @@ Passwords are salted and hashed using the core `crypto` for either storing the p
 
 These are the **main** features that I am planning to implement in the new version:
 
-### Simple File Explorer
+### Simple File Explorer :white_check_mark:
 
 Users can use the file explorer to organise their files into folders. They can also create 'infinitely' nested folders within folders. At least for right now, the file explorer will be relatively simple.
 
-### Recent File Tabs
+### Recent File Tabs :white_check_mark:
 
 When a user opens a new file, a tab will appear which the user can click on to quickly navigate back to that file (just like in IDEs).
 
-### Permanent Storage of Files
+### Permanent Storage of Files :white_check_mark:
 
 Users can create an account, and so will be able to permanently save their files to a database. This means they can access their files from any machine.
 
