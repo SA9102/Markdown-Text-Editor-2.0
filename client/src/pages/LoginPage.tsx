@@ -48,9 +48,6 @@ const LoginPage = () => {
           </Text>
         )}
         <Title>Sign into your account.</Title>
-        <Text size="xs" c="gray">
-          (Authentication works, but you cannot save any files yet.)
-        </Text>
 
         <TextInput label="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
         <PasswordInput label="Password" value={password} onChange={(e) => setPassword(e.target.value)} />

@@ -10,6 +10,6 @@ I am doing the entire front-end with TypeScript, and since it will use a databas
 
 Contains some limited styling using the [Mantine](https://mantine.dev/) component library for React, and [Tabler](https://tabler.io/icons) for the icons.
 
-More importantly, it also features a login and register page with validation. Users can create an account requiring a username and password, and the account is stored on a MongoDB database. **I would not recommend doing this right now since you cannot save any data your account yet, and there is no way to delete accounts yet.**
+More importantly, it also features a login and register page with validation. Users can create an account requiring a username and password, and the account is stored on a MongoDB database.
 
 Passwords are salted and hashed using the core `crypto` for either storing the password in the database (for registering), or for comparing a password stored in the database based on the given username (for logging in).

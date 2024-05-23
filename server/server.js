@@ -33,27 +33,14 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use((req, res, next) => {
-  console.log("SESSION");
-  console.log(req.session);
-  console.log("USER");
-  console.log(req.user);
-  next();
-});
-
 app.post("/registerUser", async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username });
 
-    console.log(user);
-    console.log(req.body.password);
-
     if (user) {
-      console.log("Already exists");
       return res.json({ success: false, info: "username" });
     }
 
-    console.log("CONTINUING ...");
     const saltHash = generatePassword(req.body.password);
     const salt = saltHash.salt;
     const hash = saltHash.hash;
@@ -61,15 +48,11 @@ app.post("/registerUser", async (req, res) => {
     res.status(201);
     res.json({ success: true, info: "Account creation successful." });
   } catch (err) {
-    console.log(err);
     res.json({ success: false, info: "A server error occurred. Please try again." });
   }
 });
 
 app.post("/loginUser", passport.authenticate("local"), (req, res, next) => {
-  console.log("USER in /loginUser");
-  console.log(req.session);
-  console.log(req.user);
   req.session.save();
   res.status(200).json(req.user);
 });
@@ -77,17 +60,13 @@ app.post("/loginUser", passport.authenticate("local"), (req, res, next) => {
 app.get("/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) {
-      console.log("IS ERR");
       return res.json({ success: false });
     }
-    console.log("NO ERR");
     res.json({ success: true });
   });
 });
 
 app.get("/getUser", async (req, res) => {
-  console.log("IS AUTHENTICATED");
-  console.log(req.isAuthenticated());
   if (req.isAuthenticated()) {
     try {
       const data = await Folder.findOne({ user: req.user.id });
@@ -106,7 +85,6 @@ app.get("/getUser", async (req, res) => {
 });
 
 app.post("/saveData", async (req, res) => {
-  console.log(req.body.data);
   try {
     await Folder.findOneAndDelete({ user: req.user.id });
     await Folder.create({ data: req.body.data, user: req.user.id });
@@ -119,9 +97,7 @@ app.post("/saveData", async (req, res) => {
 
 app.get("/getData", async (req, res) => {
   try {
-    console.log("FETCHING DATA ...");
     const data = await Folder.findOne({ user: req.user.id });
-    console.log(data.data);
     res.json({ data: data.data });
   } catch (err) {
     console.log(err);

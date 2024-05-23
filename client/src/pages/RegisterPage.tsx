@@ -73,9 +73,7 @@ const RegisterPage = () => {
     <>
       <Stack w="400" mx="auto" mt="30">
         <Title>Create an account.</Title>
-        <Text size="xs" c="gray">
-          (Registration and authentication work, but you cannot save any files yet.)
-        </Text>
+
         <TextInput
           label="Username"
           error={isInvalidUsername ? "Invalid username." : isUsernameTaken ? "Username already taken." : ""}
@@ -84,6 +82,14 @@ const RegisterPage = () => {
           onChange={(e) => setUsername(e.target.value)}
         />
         <PasswordInput label="Password" error={isInvalidPassword ? "Invalid password." : ""} name="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <Text size="xs" c="gray">
+          Password must:
+          <br />- Be at least 8 characters long
+          <br />- Have at least one uppercase letter
+          <br />- Have at least one lowercase letter
+          <br />- Have at least one number
+          <br />- Have at least one special character from: £ $ % & * @ ^
+        </Text>
         <PasswordInput
           label="Confirm Password"
           error={isPasswordMismatch ? "Passwords don't match." : ""}

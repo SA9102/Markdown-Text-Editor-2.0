@@ -81,6 +81,7 @@ const MainPage = () => {
   const [editorAndViewer, setEditorAndViewer] = useState(true);
   const [recentFileTabs, setRecentFileTabs] = useState<RecentFileTabType[]>([]); // Stores the ids of file tabs
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Keep track of whether or not the user is logged in
+  const [canSaveToDB, setCanSaveToDB] = useState(false);
 
   useEffect(() => {
     axios({ method: "get", url: "http://localhost:3000/getUser" })
@@ -103,7 +104,7 @@ const MainPage = () => {
       });
   }, []);
 
-  const [data, dispatch] = useReducer(
+  let [data, dispatch] = useReducer(
     produce((draft, action) => {
       switch (action.type) {
         case ACTIONS.SET_DATA:
@@ -410,6 +411,9 @@ const MainPage = () => {
   // Handles the change of state of 'textEditor', which holds the text of the currently selected file.
   const handleChangeTextEditor = (newBody: string) => {
     setTextEditor(newBody);
+    if (canSaveToDB) {
+      setCanSaveToDB(false);
+    }
   };
 
   /*
@@ -417,16 +421,9 @@ const MainPage = () => {
   */
   const handleSaveFilesToState = () => {
     let editedFilesCopy = [...editedFiles];
-    if (selectedFile) {
-      // setEditedFiles((prev) =>
-      //   prev.map((fileData) => {
-      //     if (fileData[0] === selectedFile.id) {
-      //       fileData[2] = textEditor;
-      //     }
-      //     return fileData;
-      //   })
-      // );
 
+    if (selectedFile) {
+      console.log("THERE IS A SELECTED FILE");
       editedFilesCopy = editedFiles.map((fileData) => {
         if (fileData[0] === selectedFile.id) {
           fileData[2] = textEditor;
@@ -436,9 +433,11 @@ const MainPage = () => {
 
       setEditedFiles(editedFilesCopy);
     }
+
     for (let fileData of editedFilesCopy) {
       dispatch({ type: ACTIONS.UPDATE_FILE_BODY, payload: { targetItemId: fileData[0], idChain: fileData[1], targetItemBody: fileData[2] } });
     }
+    setCanSaveToDB(true);
   };
 
   const logout = async () => {
@@ -457,18 +456,6 @@ const MainPage = () => {
 
   let folders = [];
   let files = [];
-
-  const recGetFilesAndFolders = (data: FileAndFolderTreeType) => {
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].type === "Folder") {
-        // let o = { id: data[i].id, name: data[i].name, parentFolderIds: data[i].parentFolderIds };
-        folders.push({ id: data[i].id, name: data[i].name, parentFolderIds: data[i].parentFolderIds });
-        recGetFilesAndFolders(data[i].items);
-      } else if (data[i].type === "File") {
-        files.push({ id: data[i].id, name: data[i].name, body: data[i].body, parentFolderIds: data[i].parentFolderIds });
-      }
-    }
-  };
 
   const handleSaveToDB = async () => {
     try {
@@ -489,10 +476,8 @@ const MainPage = () => {
         setEditedFiles([]);
         setRecentFileTabs([]);
         dispatch({ type: ACTIONS.SET_DATA, payload: { fetchedData: JSON.parse(res.data.data) } });
-        // setRefresh(!refresh);
       }
     } catch (err) {
-      console.log("There was an error in fetching data from DB");
       console.log(err);
     }
   };
@@ -505,12 +490,20 @@ const MainPage = () => {
           <Button variant="filled" onClick={logout}>
             Logout
           </Button>
-          <Button variant="filled" onClick={handleSaveToDB}>
-            Save
-          </Button>
-          <Button variant="filled" onClick={handleSaveToDB}>
-            Save To DB
-          </Button>
+          <Button onClick={handleSaveFilesToState}>Save All To State</Button>
+          {canSaveToDB ? (
+            <Button variant="filled" onClick={handleSaveToDB}>
+              Save All To Database
+            </Button>
+          ) : (
+            <Button variant="filled" onClick={handleSaveToDB} disabled>
+              Save All To Database
+            </Button>
+          )}
+          {/* <Button variant="filled" onClick={handleSaveToDB}>
+            Save All To Database
+          </Button> */}
+
           <Button onClick={handleFetchDataFromDB}>Get Data</Button>
         </Group>
       ) : (
@@ -524,7 +517,7 @@ const MainPage = () => {
           </Button>
         </Group>
       )}
-      <Button onClick={handleSaveFilesToState}>Save All</Button>
+
       {/* File explorer */}
       {fileExplorerOpen && (
         <div id="file-explorer-panel">
