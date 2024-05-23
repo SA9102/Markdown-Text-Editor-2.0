@@ -8,6 +8,10 @@ Essentially, Markdown Text Editor 2.0 will be a complete revamp of my current Ma
 
 I am doing the entire front-end with TypeScript, and since it will use a database I will also be connecting an Express server to it (made with just vanilla JavaScript).
 
+Not responsive on smaller screens yet.
+
+https://github.com/SA9102/Markdown-Text-Editor/assets/96877426/699df02d-1c57-4383-b47b-f19fe4bf51c3
+
 ## Overview
 
 **Currently, it contains a simple file explorer system. It features CRUD operations for both files and folders. You can create files and folders, and you can create folders within folders.**
@@ -27,8 +31,6 @@ Contains some limited styling using the [Mantine](https://mantine.dev/) componen
 ## Security
 
 Passwords are salted and hashed using the core `crypto` for either storing the password in the database (for registering), or for comparing a password stored in the database based on the given username (for logging in).
-
-https://github.com/SA9102/Markdown-Text-Editor/assets/96877426/e5c746b1-ad50-4283-a260-1726b8a447af
 
 ## :sparkles: New Features
 
