@@ -1,3 +1,4 @@
+import { Box } from "@mantine/core";
 import Markdown from "marked-react";
 
 type MarkdownViewerProps = {
@@ -6,9 +7,9 @@ type MarkdownViewerProps = {
 
 const MarkdownViewer = ({ body }: MarkdownViewerProps) => {
   return (
-    <div className="markdown-viewer">
+    <Box>
       <Markdown>{body}</Markdown>
-    </div>
+    </Box>
   );
 };
 

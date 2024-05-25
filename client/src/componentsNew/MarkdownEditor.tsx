@@ -1,14 +1,15 @@
+import { Center, Text, Textarea } from "@mantine/core";
+
 type MarkdownEditorProps = {
-  id: string;
+  isFileSelected: boolean;
   body: string;
   onChange: (arg0: string) => void;
 };
 
-const MarkdownEditor = ({ id, body, onChange }: MarkdownEditorProps) => {
-  console.log("INSIDE MARKDOWN EDITOR");
+const MarkdownEditor = ({ isFileSelected, body, onChange }: MarkdownEditorProps) => {
   return (
     <>
-      <textarea name="" id="" value={body} onChange={(e) => onChange(e.target.value)} />
+      <textarea className="editor" value={body} onChange={(e) => onChange(e.target.value)} />
     </>
   );
 };

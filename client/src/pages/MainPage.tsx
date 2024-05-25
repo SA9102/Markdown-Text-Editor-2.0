@@ -1,8 +1,12 @@
 // React
 import { useState, useEffect, useReducer } from "react";
 
+import "./test.css";
+
 // Mantine
-import { Button, ActionIcon, Tooltip, Group } from "@mantine/core";
+import { Button, ActionIcon, Tooltip, Group, Burger, Stack, Box, Flex, Text, Drawer, Textarea, Switch, SegmentedControl } from "@mantine/core";
+import { useDisclosure, useMediaQuery } from "@mantine/hooks";
+import { IconPencil, IconEye } from "@tabler/icons-react";
 
 // Tabler Icons
 import { IconFolderFilled, IconFileFilled, IconUserPlus, IconLogin2 } from "@tabler/icons-react";
@@ -12,7 +16,7 @@ import { produce } from "immer";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { BSON, EJSON } from "bson";
+import ReactPDF, { PDFDownloadLink } from "@react-pdf/renderer";
 
 // Types
 import FolderType from "../types/FolderType";
@@ -28,6 +32,7 @@ import styles from "../styles/mainPage.module.css";
 
 import testData from "../testData";
 import FileAndFolderTreeType from "../types/FileAndFolderTreeType";
+import MyDocument from "../componentsNew/MyDocument";
 
 const enum ACTIONS {
   SET_DATA,
@@ -82,6 +87,13 @@ const MainPage = () => {
   const [recentFileTabs, setRecentFileTabs] = useState<RecentFileTabType[]>([]); // Stores the ids of file tabs
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Keep track of whether or not the user is logged in
   const [canSaveToDB, setCanSaveToDB] = useState(false);
+  const [editorOrViewer, setEditorOrViewer] = useState("editor");
+
+  const [fileExplorerOpened, { toggle, close }] = useDisclosure();
+
+  const smallScreen = useMediaQuery("(max-width: 36em");
+  const mediumScreen = useMediaQuery("(max-width: 62em");
+  const bigScreen = useMediaQuery("(max-width: 75em");
 
   useEffect(() => {
     axios({ method: "get", url: "http://localhost:3000/getUser" })
@@ -209,7 +221,7 @@ const MainPage = () => {
 
           draft.splice(index, 1);
 
-          // // If the item deleted was a file that was opened by the user, then deselect this file as it no longer exists.
+          // // If the item deleted was a file that was fileExplorerOby the user, then deselect this file as it no longer exists.
           // if (action.payload.targetItemId === selectedFile) {
           //   setSelectedFile('-1');
           // }
@@ -482,44 +494,140 @@ const MainPage = () => {
     }
   };
 
-  return (
-    <>
-      {isLoggedIn ? (
-        // Show the 'logout' and 'save' buttons if the user is logged in
-        <Group>
-          <Button variant="filled" onClick={logout}>
-            Logout
-          </Button>
-          <Button onClick={handleSaveFilesToState}>Save All To State</Button>
-          {canSaveToDB ? (
-            <Button variant="filled" onClick={handleSaveToDB}>
-              Save All To Database
-            </Button>
-          ) : (
-            <Button variant="filled" onClick={handleSaveToDB} disabled>
-              Save All To Database
-            </Button>
-          )}
-          {/* <Button variant="filled" onClick={handleSaveToDB}>
-            Save All To Database
-          </Button> */}
+  const handleExportPDF = () => {
+    ReactPDF.render(<MyDocument />, "C:/Users/shaya/OneDrive/Documents PREV/My Projects/example.pdf");
+  };
 
-          <Button onClick={handleFetchDataFromDB}>Get Data</Button>
-        </Group>
-      ) : (
-        // Show the 'login' and 'register' buttons if the user is not logged in
-        <Group>
-          <Button color="green" size="xs" leftSection={<IconLogin2 />} onClick={() => navigate("/login")}>
-            Log In
+  console.log(selectedFile !== null);
+
+  return (
+    // <>
+    //   {smallScreen ? <p>SMALL SCREEN</p> : <p>NOT SMALL SCREEN</p>}
+    // <>
+    //   {isLoggedIn ? (
+    //     // Show the 'logout' and 'save' buttons if the user is logged in
+    //     <Group>
+    //       <Button variant="filled" onClick={logout}>
+    //         Logout
+    //       </Button>
+    //       <Button onClick={handleSaveFilesToState}>Save All To State</Button>
+    //       {canSaveToDB ? (
+    //         <Button variant="filled" onClick={handleSaveToDB}>
+    //           Save All To Database
+    //         </Button>
+    //       ) : (
+    //         <Button variant="filled" onClick={handleSaveToDB} disabled>
+    //           Save All To Database
+    //         </Button>
+    //       )}
+    //       <Button variant="filled" onClick={handleExportPDF}>
+    //         Export As PDF
+    //       </Button>
+    //       <PDFDownloadLink document={<MyDocument text={"hey"} />}>Download</PDFDownloadLink>
+    //       <Button onClick={handleFetchDataFromDB}>Get Data</Button>
+    //     </Group>
+    //   ) : (
+    //     // Show the 'login' and 'register' buttons if the user is not logged in
+    //     <Group>
+    //       <Button color="green" size="xs" leftSection={<IconLogin2 />} onClick={() => navigate("/login")}>
+    //         Log In
+    //       </Button>
+    //       <Button color="orange" size="xs" leftSection={<IconUserPlus />} onClick={() => navigate("/register")}>
+    //         Register
+    //       </Button>
+    //     </Group>
+    //   )}
+
+    //   {fileExplorerOpen && (
+    //     <div id="file-explorer-panel">
+    //       {/* Toolbar - 'create new file' and 'create new folder' buttons */}
+    //       <div id="toolbar">
+    //         <Tooltip.Group openDelay={600} closeDelay={100}>
+    //           <Tooltip label="New File" withArrow arrowSize={5}>
+    //             <ActionIcon size="lg" variant="subtle" onClick={() => handleAddItem(null, null, "File")}>
+    //               <IconFileFilled />
+    //             </ActionIcon>
+    //           </Tooltip>
+    //           <Tooltip label="New Folder" withArrow arrowSize={5}>
+    //             <ActionIcon size="lg" variant="subtle" onClick={() => handleAddItem(null, null, "Folder")}>
+    //               <IconFolderFilled />
+    //             </ActionIcon>
+    //           </Tooltip>
+    //         </Tooltip.Group>
+    //       </div>
+    //       <FileExplorerPanel
+    //         data={data}
+    //         onToggleExpand={handleToggleExpandFolder}
+    //         onUpdateName={handleUpdateItemName}
+    //         onToggleEdit={handleEditItem}
+    //         onAddFileTab={handleAddFileTab}
+    //         onAdd={handleAddItem}
+    //         onDelete={handleDeleteItem}
+    //         onSelectFile={handleSelectFile}
+    //       />
+    //     </div>
+    //   )}
+    //   {editorAndViewer ? (
+    //     <>
+    //       <div id="markdown-editor-panel">{selectedFile !== null && <MarkdownEditor id={selectedFile.id} body={textEditor} onChange={handleChangeTextEditor} />}</div>
+    //       <div id="markdown-viewer-panel">{selectedFile !== null && <MarkdownViewer body={textEditor} />}</div>
+    //     </>
+    //   ) : (
+    //     <>
+    //       <div id="markdown-viewer-panel">{selectedFile !== null && <MarkdownViewer body={textEditor} />}</div>
+    //     </>
+    //   )}
+    //   {recentFileTabs.map((file: RecentFileTabType) => {
+    //     return (
+    //       <div key={file.id}>
+    //         <button onClick={() => handleSelectFile(file.id, file.parentFolderIds, file.name)}>{file.name}</button>
+    //       </div>
+    //     );
+    //   })}
+    // </>
+
+    // -------------------------------------------------------
+
+    <>
+      <Stack className="App" h="100vh" gap="0">
+        <Group align="center" m="0" p="xs">
+          <Burger size="sm" opened={fileExplorerOpened} onClick={toggle} aria-label="File Explorer Drawer" />
+          <SegmentedControl
+            withItemsBorders={false}
+            size="xs"
+            value={editorOrViewer}
+            onChange={setEditorOrViewer}
+            data={[
+              { label: "Editor", value: "editor" },
+              { label: "Viewer", value: "viewer" },
+            ]}
+          />
+          <Button bg="cyan" size="xs">
+            Login
           </Button>
-          <Button color="orange" size="xs" leftSection={<IconUserPlus />} onClick={() => navigate("/register")}>
+          <Button bg="red" size="xs">
             Register
           </Button>
         </Group>
-      )}
-
-      {/* File explorer */}
-      {fileExplorerOpen && (
+        <Stack style={{ flexShrink: 0, flexGrow: 1 }}>
+          {selectedFile !== null ? (
+            editorOrViewer === "editor" ? (
+              <MarkdownEditor isFileSelected={selectedFile !== null} body={textEditor} onChange={handleChangeTextEditor} />
+            ) : (
+              <MarkdownViewer body={textEditor} />
+            )
+          ) : (
+            <Text p="lg" ta="center">
+              No file selected. Select a file from the file explorer, or create a new file.
+            </Text>
+          )}
+        </Stack>
+      </Stack>
+      {/* <div className="container">
+        <p>Sample text</p>
+        <textarea name="" id=""></textarea>
+      </div> */}
+      <Drawer size="100%" opened={fileExplorerOpened} onClose={close}>
         <div id="file-explorer-panel">
           {/* Toolbar - 'create new file' and 'create new folder' buttons */}
           <div id="toolbar">
@@ -547,24 +655,7 @@ const MainPage = () => {
             onSelectFile={handleSelectFile}
           />
         </div>
-      )}
-      {editorAndViewer ? (
-        <>
-          <div id="markdown-editor-panel">{selectedFile !== null && <MarkdownEditor id={selectedFile.id} body={textEditor} onChange={handleChangeTextEditor} />}</div>
-          <div id="markdown-viewer-panel">{selectedFile !== null && <MarkdownViewer body={textEditor} />}</div>
-        </>
-      ) : (
-        <>
-          <div id="markdown-viewer-panel">{selectedFile !== null && <MarkdownViewer body={textEditor} />}</div>
-        </>
-      )}
-      {recentFileTabs.map((file: RecentFileTabType) => {
-        return (
-          <div key={file.id}>
-            <button onClick={() => handleSelectFile(file.id, file.parentFolderIds, file.name)}>{file.name}</button>
-          </div>
-        );
-      })}
+      </Drawer>
     </>
   );
 };

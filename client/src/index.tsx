@@ -1,12 +1,12 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './components/App.js';
-import axios from 'axios';
-import { BrowserRouter } from 'react-router-dom';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./components/App.js";
+import axios from "axios";
+import { BrowserRouter } from "react-router-dom";
 
 // Mantine
-import '@mantine/core/styles.css';
-import { MantineProvider, createTheme, virtualColor } from '@mantine/core';
+import "@mantine/core/styles.css";
+import { MantineProvider, createTheme, virtualColor } from "@mantine/core";
 
 axios.defaults.withCredentials = true;
 
@@ -18,10 +18,10 @@ const theme = createTheme({
   //     dark: 'orange',
   //   }),
   // },
-  defaultRadius: 'sm',
+  defaultRadius: "md",
 });
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   // <React.StrictMode>
   <MantineProvider defaultColorScheme="dark" theme={theme}>
     <BrowserRouter>
