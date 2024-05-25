@@ -1,8 +1,8 @@
 # :hammer_and_wrench: :notebook: Markdown Text Editor 2.0
 
-**This is the branch where I am working on the new version of Markdown Text Editor.**
+**This is the main branch of Markdown Text Editor 2.0. It will receive gradual updates, and you can find the update logs in this README file.**
 
-This is the branch where I am working on Markdown Text Editor 2.0. It will receive gradual updates, and you can find the update logs in this README file.
+**The branch I am currently working on is the `styling` branch where I am now adding styling to the application. Once complete, it will be merged onto this branch.**
 
 Essentially, Markdown Text Editor 2.0 will be a complete revamp of my current Markdown Text Editor project. As well as having a new visual appearance, it will also include extra features like a nested folder-file system, and the ability to save your notes permanently on a database and retrieve them from any machine (so this new version will have a back-end also, unlike the previous version).
 
@@ -69,6 +69,11 @@ The following features won't be in the first version of Markdown Text Editor 2.0
 - Move files to other folders
 
 ## Update Log
+
+### 23rd May 2024
+
+- Finally added the server and database to the application. Now includes account registration and authentication, and you can save data to your account.
+- Changed the logic (hopefully optimised) in how the 'files and folders data' is stored and manipulated during CRUD operations.
 
 ### 4th April 2024
 
