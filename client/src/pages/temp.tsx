@@ -19,8 +19,8 @@ import FolderType from "../types/FolderType";
 import FileType from "../types/FileType";
 
 // Component imports
-import MarkdownEditor from "../componentsNew/MarkdownEditor";
-import MarkdownViewer from "../componentsNew/MarkdownViewer";
+import MarkdownEditor from "../components/MarkdownEditor";
+import MarkdownViewer from "../components/MarkdownViewer";
 import FileExplorerPanel from "../components/FileExplorerPanel";
 
 // CSS

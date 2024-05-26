@@ -6,6 +6,7 @@ import FileTab from "./FileTab";
 import FileAndFolderTreeType from "../types/FileAndFolderTreeType";
 import FolderType from "../types/FolderType";
 import FileType from "../types/FileType";
+import { Stack } from "@mantine/core";
 
 type FileExplorerPanelProps = {
   data: FileAndFolderTreeType;
@@ -24,7 +25,7 @@ const isFolder = (item: FolderType | FileType): item is FolderType => {
 
 const FileExplorerPanel = ({ data, onToggleExpand, onUpdateName, onAddFileTab, onToggleEdit, onAdd, onDelete, onSelectFile }: FileExplorerPanelProps) => {
   return (
-    <div id="folder-and-files-panel">
+    <Stack gap="0" m="0" id="folder-and-files-panel">
       {data.map((item) => {
         if (isFolder(item)) {
           return (
@@ -47,7 +48,7 @@ const FileExplorerPanel = ({ data, onToggleExpand, onUpdateName, onAddFileTab, o
           );
         }
       })}
-    </div>
+    </Stack>
   );
 };
 

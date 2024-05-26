@@ -3,6 +3,10 @@ import { useState } from "react";
 
 // Types
 import FileType from "../types/FileType";
+import { Button, Group, Text, TextInput } from "@mantine/core";
+import FileEditOptions from "./FileEditOptions";
+
+import { useMediaQuery } from "@mantine/hooks";
 
 type FileTabProps = {
   file: FileType;
@@ -18,47 +22,47 @@ const FileTab = ({ file, paddingLeft, onDelete, onToggleEdit, onAddFileTab, onUp
   const [isHover, setIsHover] = useState(false);
   const [newName, setNewName] = useState(file.name);
 
+  const smallScreen = useMediaQuery("(max-width: 36em");
+  const mediumScreen = useMediaQuery("(max-width: 62em");
+  const bigScreen = useMediaQuery("(max-width: 75em");
+
   return (
-    <div
-      className="file-tab"
-      style={{ paddingLeft: `${paddingLeft}rem` }}
+    <Group
+      align="center"
+      h="2rem"
+      bg="dark.6"
+      style={{ paddingLeft: `${paddingLeft}rem`, borderTop: "1px solid black", borderBottom: "1px solid black" }}
       onMouseOver={() => setIsHover(true)}
       onMouseOut={() => setIsHover(false)}
-      onClick={() => {
-        onSelectFile(file.id, file.parentFolderIds, file.name);
-      }}
-      onDoubleClick={() => {
-        onAddFileTab(file.id, file.name, file.parentFolderIds);
-      }}
     >
       {file.isEditingName ? (
         <>
-          <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} />
-          <button
-            onClick={() => {
-              onToggleEdit(file.parentFolderIds, file.id);
-              onUpdateName(file.parentFolderIds, file.id, newName);
-            }}
-          >
-            Save
-          </button>
+          <TextInput
+            size="compact-xs"
+            type="text"
+            rightSection={
+              <Button
+                variant="transparent"
+                size="compact-xs"
+                onClick={() => {
+                  onToggleEdit(file.parentFolderIds, file.id);
+                  onUpdateName(file.parentFolderIds, file.id, newName);
+                }}
+              >
+                Save
+              </Button>
+            }
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+          />
         </>
       ) : (
-        <>
-          <p>{file.name}</p>
-          {isHover && (
-            <>
-              <button onClick={() => onToggleEdit(file.parentFolderIds, file.id)}>
-                <i className="fa-solid fa-pen"></i>
-              </button>
-              <button onClick={() => onDelete(file.parentFolderIds, file.id, "file")}>
-                <i className="fa-solid fa-trash-can"></i>
-              </button>
-            </>
-          )}
-        </>
+        <Group justify="space-between" w="100%">
+          <Text size="sm">{file.name}</Text>
+          {(smallScreen || mediumScreen) && <FileEditOptions fileId={file.id} parentFolderIds={file.parentFolderIds} onEditName={onToggleEdit} onDelete={onDelete} />}
+        </Group>
       )}
-    </div>
+    </Group>
   );
 };
 

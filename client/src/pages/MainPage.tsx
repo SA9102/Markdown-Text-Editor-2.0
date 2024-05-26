@@ -1,12 +1,12 @@
 // React
-import { useState, useEffect, useReducer } from "react";
+import { useState, useEffect, useReducer, createContext } from "react";
 
 import "./test.css";
 
 // Mantine
-import { Button, ActionIcon, Tooltip, Group, Burger, Stack, Box, Flex, Text, Drawer, Textarea, Switch, SegmentedControl } from "@mantine/core";
+import { Button, ActionIcon, Tooltip, Group, Burger, Stack, Box, Flex, Text, Drawer, Textarea, Switch, SegmentedControl, CloseButton, useMantineColorScheme } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
-import { IconPencil, IconEye } from "@tabler/icons-react";
+import { IconPencil, IconEye, IconSettings, IconAdjustments, IconAdjustmentsHorizontal, IconFolderOpen } from "@tabler/icons-react";
 
 // Tabler Icons
 import { IconFolderFilled, IconFileFilled, IconUserPlus, IconLogin2 } from "@tabler/icons-react";
@@ -23,8 +23,8 @@ import FolderType from "../types/FolderType";
 import FileType from "../types/FileType";
 
 // Component imports
-import MarkdownEditor from "../componentsNew/MarkdownEditor";
-import MarkdownViewer from "../componentsNew/MarkdownViewer";
+import MarkdownEditor from "../components/MarkdownEditor";
+import MarkdownViewer from "../components/MarkdownViewer";
 import FileExplorerPanel from "../components/FileExplorerPanel";
 
 // CSS
@@ -33,6 +33,9 @@ import styles from "../styles/mainPage.module.css";
 import testData from "../testData";
 import FileAndFolderTreeType from "../types/FileAndFolderTreeType";
 import MyDocument from "../componentsNew/MyDocument";
+import SettingsButton from "../components/SettingsButton";
+import MobileSidebar from "../components/MobileSidebar";
+import Toolbar from "../components/Toolbar";
 
 const enum ACTIONS {
   SET_DATA,
@@ -46,6 +49,7 @@ const enum ACTIONS {
 
 type selectedFileType = {
   id: string;
+  name: string;
   parentFolderIds: string[];
 };
 
@@ -56,6 +60,8 @@ type RecentFileTabType = {
   name: string;
   parentFolderIds: string[];
 };
+
+// export const DimensionsContext = createContext();
 
 const MainPage = () => {
   // Returns the current full date and time.
@@ -94,6 +100,8 @@ const MainPage = () => {
   const smallScreen = useMediaQuery("(max-width: 36em");
   const mediumScreen = useMediaQuery("(max-width: 62em");
   const bigScreen = useMediaQuery("(max-width: 75em");
+
+  const { colorScheme, setColorScheme } = useMantineColorScheme();
 
   useEffect(() => {
     axios({ method: "get", url: "http://localhost:3000/getUser" })
@@ -282,7 +290,12 @@ const MainPage = () => {
             draft = draft.find((folder: FolderType) => folder.id === action.payload.idChain[i]).items;
           }
           draft = draft.find((folder: FolderType) => folder.id === action.payload.targetFolderId);
-          draft.isExpand = !draft.isExpand;
+
+          if (action.payload.isExpand) {
+            draft.isExpand = true;
+          } else {
+            draft.isExpand = false;
+          }
           break;
 
         default:
@@ -304,10 +317,10 @@ const MainPage = () => {
   // Handles the expanding/minimising of a folder (when a folder is expanded,
   // its subfolders are shown).
   //
-  const handleToggleExpandFolder = (idChain: string[], targetFolderId: string) => {
+  const handleToggleExpandFolder = (idChain: string[], targetFolderId: string, isExpand: boolean) => {
     dispatch({
       type: ACTIONS.EXPAND_FOLDER,
-      payload: { idChain, targetFolderId },
+      payload: { idChain, targetFolderId, isExpand },
     });
   };
 
@@ -400,7 +413,7 @@ const MainPage = () => {
       setEditedFiles([...editedFiles, newFileArray]);
     }
 
-    setSelectedFile({ id, parentFolderIds });
+    setSelectedFile({ id, name, parentFolderIds });
     setTextEditor(nextFileBody);
   };
 
@@ -589,33 +602,18 @@ const MainPage = () => {
     // -------------------------------------------------------
 
     <>
+      {/* We provide a 'dimensions' context so that the components can be rendered differently based on the screen size. */}
+      {/* <DimensionsContext.Provider value={smallScreen ? smallScreen : mediumScreen ? mediumScreen : bigScreen}> */}
       <Stack className="App" h="100vh" gap="0">
-        <Group align="center" m="0" p="xs">
-          <Burger size="sm" opened={fileExplorerOpened} onClick={toggle} aria-label="File Explorer Drawer" />
-          <SegmentedControl
-            withItemsBorders={false}
-            size="xs"
-            value={editorOrViewer}
-            onChange={setEditorOrViewer}
-            data={[
-              { label: "Editor", value: "editor" },
-              { label: "Viewer", value: "viewer" },
-            ]}
-          />
-          <Button bg="cyan" size="xs">
-            Login
-          </Button>
-          <Button bg="red" size="xs">
-            Register
-          </Button>
-        </Group>
-        <Stack style={{ flexShrink: 0, flexGrow: 1 }}>
+        <Toolbar fileExplorerOpened={fileExplorerOpened} onToggle={toggle} editorOrViewer={editorOrViewer} setEditorOrViewer={setEditorOrViewer} />
+        <Stack justify="center" c="dark.2" style={{ flexShrink: 0, flexGrow: 1 }} gap="0">
           {selectedFile !== null ? (
-            editorOrViewer === "editor" ? (
-              <MarkdownEditor isFileSelected={selectedFile !== null} body={textEditor} onChange={handleChangeTextEditor} />
-            ) : (
-              <MarkdownViewer body={textEditor} />
-            )
+            <>
+              <Text bg="dark.9" px="5" py="1" fw={500}>
+                {selectedFile.name}
+              </Text>
+              {editorOrViewer === "editor" ? <MarkdownEditor isFileSelected={selectedFile !== null} body={textEditor} onChange={handleChangeTextEditor} /> : <MarkdownViewer body={textEditor} />}
+            </>
           ) : (
             <Text p="lg" ta="center">
               No file selected. Select a file from the file explorer, or create a new file.
@@ -623,39 +621,19 @@ const MainPage = () => {
           )}
         </Stack>
       </Stack>
-      {/* <div className="container">
-        <p>Sample text</p>
-        <textarea name="" id=""></textarea>
-      </div> */}
-      <Drawer size="100%" opened={fileExplorerOpened} onClose={close}>
-        <div id="file-explorer-panel">
-          {/* Toolbar - 'create new file' and 'create new folder' buttons */}
-          <div id="toolbar">
-            <Tooltip.Group openDelay={600} closeDelay={100}>
-              <Tooltip label="New File" withArrow arrowSize={5}>
-                <ActionIcon size="lg" variant="subtle" onClick={() => handleAddItem(null, null, "File")}>
-                  <IconFileFilled />
-                </ActionIcon>
-              </Tooltip>
-              <Tooltip label="New Folder" withArrow arrowSize={5}>
-                <ActionIcon size="lg" variant="subtle" onClick={() => handleAddItem(null, null, "Folder")}>
-                  <IconFolderFilled />
-                </ActionIcon>
-              </Tooltip>
-            </Tooltip.Group>
-          </div>
-          <FileExplorerPanel
-            data={data}
-            onToggleExpand={handleToggleExpandFolder}
-            onUpdateName={handleUpdateItemName}
-            onToggleEdit={handleEditItem}
-            onAddFileTab={handleAddFileTab}
-            onAdd={handleAddItem}
-            onDelete={handleDeleteItem}
-            onSelectFile={handleSelectFile}
-          />
-        </div>
-      </Drawer>
+      <MobileSidebar
+        data={data}
+        onToggleExpandFolder={handleToggleExpandFolder}
+        onUpdateItemName={handleUpdateItemName}
+        onEditItem={handleEditItem}
+        onAddFileTab={handleAddFileTab}
+        onAddItem={handleAddItem}
+        onDeleteItem={handleDeleteItem}
+        onSelectFile={handleSelectFile}
+        fileExplorerOpened={fileExplorerOpened}
+        onClose={close}
+      />
+      {/* </DimensionsContext.Provider> */}
     </>
   );
 };

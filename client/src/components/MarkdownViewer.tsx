@@ -7,7 +7,7 @@ type MarkdownViewerProps = {
 
 const MarkdownViewer = ({ body }: MarkdownViewerProps) => {
   return (
-    <Box>
+    <Box p="xs">
       <Markdown>{body}</Markdown>
     </Box>
   );
