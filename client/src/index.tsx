@@ -6,7 +6,9 @@ import { BrowserRouter } from "react-router-dom";
 
 // Mantine
 import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
 import { MantineProvider, createTheme, virtualColor } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
 
 axios.defaults.withCredentials = true;
 
@@ -25,6 +27,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   // <React.StrictMode>
   <MantineProvider defaultColorScheme="dark" theme={theme}>
     <BrowserRouter>
+      <Notifications />
       <App />
     </BrowserRouter>
   </MantineProvider>

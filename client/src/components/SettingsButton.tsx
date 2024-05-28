@@ -10,7 +10,7 @@ const SettingsButton = () => {
   return (
     <Menu shadow="md" width={200}>
       <Menu.Target>
-        <ActionIcon aria-label="Settings" variant="subtle">
+        <ActionIcon aria-label="Settings" variant="light">
           <IconAdjustments style={{ width: "70%", height: "70%" }} stroke={1.5} />
         </ActionIcon>
       </Menu.Target>

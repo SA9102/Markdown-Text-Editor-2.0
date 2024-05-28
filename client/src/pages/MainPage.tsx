@@ -4,7 +4,7 @@ import { useState, useEffect, useReducer, createContext } from "react";
 import "./test.css";
 
 // Mantine
-import { Button, ActionIcon, Tooltip, Group, Burger, Stack, Box, Flex, Text, Drawer, Textarea, Switch, SegmentedControl, CloseButton, useMantineColorScheme } from "@mantine/core";
+import { Button, ActionIcon, Tooltip, Group, Burger, Stack, Box, Flex, Text, Drawer, Textarea, Switch, SegmentedControl, CloseButton, useMantineColorScheme, Divider } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconPencil, IconEye, IconSettings, IconAdjustments, IconAdjustmentsHorizontal, IconFolderOpen } from "@tabler/icons-react";
 
@@ -36,6 +36,7 @@ import MyDocument from "../componentsNew/MyDocument";
 import SettingsButton from "../components/SettingsButton";
 import MobileSidebar from "../components/MobileSidebar";
 import Toolbar from "../components/Toolbar";
+import { notifications } from "@mantine/notifications";
 
 const enum ACTIONS {
   SET_DATA,
@@ -107,6 +108,7 @@ const MainPage = () => {
     axios({ method: "get", url: "http://localhost:3000/getUser" })
       .then((res) => {
         if (res.data.user) {
+          console.log("LOGGED IN");
           setIsLoggedIn(true);
           setSelectedFile(null);
           setTextEditor("");
@@ -117,12 +119,14 @@ const MainPage = () => {
           } else {
             dispatch({ type: ACTIONS.SET_DATA, payload: { fetchedData: [] } });
           }
+        } else {
+          console.log("NOT LOGGED IN");
         }
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [isLoggedIn]);
 
   let [data, dispatch] = useReducer(
     produce((draft, action) => {
@@ -199,13 +203,15 @@ const MainPage = () => {
           break;
 
         case ACTIONS.UPDATE_ITEM_NAME:
+          console.log("UPDATE_ITEM_NAME");
           for (let i = 0; i < action.payload.idChain.length; i++) {
             draft = draft.find((folder: FolderType) => folder.id === action.payload.idChain[i]).items;
           }
           draft = draft.find((item: FolderType | FileType) => item.id === action.payload.targetItemId);
+          console.log(action.payload.newItemName);
           draft.name = action.payload.newItemName;
           draft.isEditingName = false;
-
+          setSelectedFile({ ...selectedFile, name: action.payload.newItemName });
           break;
 
         case ACTIONS.EDIT_ITEM:
@@ -235,7 +241,7 @@ const MainPage = () => {
           // }
 
           // If a folder is deleted, then we want to remove any files contained in this folder from 'editedFiles' and 'recentFileTabs'
-          if (action.payload.itemType === "folder") {
+          if (action.payload.itemType === "Folder") {
             setEditedFiles(
               editedFiles.filter((fileData: EditedFilesType) => {
                 if (!fileData[1].includes(action.payload.targetItemId)) {
@@ -258,7 +264,7 @@ const MainPage = () => {
             }
 
             // If a file is deleted, then we want to remove this file from 'editedFiles' and 'recentFileTabs
-          } else if (action.payload.itemType === "file") {
+          } else if (action.payload.itemType === "File") {
             setEditedFiles(
               editedFiles.filter((fileData: EditedFilesType) => {
                 if (fileData[0] !== action.payload.targetItemId) {
@@ -413,8 +419,22 @@ const MainPage = () => {
       setEditedFiles([...editedFiles, newFileArray]);
     }
 
+    found = false;
+    for (let tab of recentFileTabs) {
+      if (tab.id === id) {
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      setRecentFileTabs([...recentFileTabs, { id, name, parentFolderIds }]);
+    }
+
     setSelectedFile({ id, name, parentFolderIds });
     setTextEditor(nextFileBody);
+
+    close();
   };
 
   // Handles the creation of a file tab for this file (if not there already) if the user double-clicks on it.
@@ -463,6 +483,11 @@ const MainPage = () => {
       dispatch({ type: ACTIONS.UPDATE_FILE_BODY, payload: { targetItemId: fileData[0], idChain: fileData[1], targetItemBody: fileData[2] } });
     }
     setCanSaveToDB(true);
+    notifications.show({
+      color: "green",
+      title: "Success!",
+      message: "Your files have been saved to state. You may now save them to your account.",
+    });
   };
 
   const logout = async () => {
@@ -474,6 +499,11 @@ const MainPage = () => {
       setEditedFiles([]);
       setRecentFileTabs([]);
       dispatch({ type: ACTIONS.SET_DATA, payload: { fetchedData: [] } });
+      notifications.show({
+        color: "green",
+        title: "Success!",
+        message: "You are now logged out.",
+      });
     } catch (err) {
       console.log(err);
     }
@@ -486,8 +516,18 @@ const MainPage = () => {
     try {
       const res = await axios({ method: "post", url: "http://localhost:3000/saveData", data: { data: JSON.stringify(data) } });
       console.log(res);
+      notifications.show({
+        color: "green",
+        title: "Success!",
+        message: "Your files have been saved to your account.",
+      });
     } catch (err) {
       console.log(err);
+      notifications.show({
+        color: "red",
+        title: "Oops!",
+        message: "There was an error in trying to save your files to your account.",
+      });
     }
   };
 
@@ -501,9 +541,19 @@ const MainPage = () => {
         setEditedFiles([]);
         setRecentFileTabs([]);
         dispatch({ type: ACTIONS.SET_DATA, payload: { fetchedData: JSON.parse(res.data.data) } });
+        notifications.show({
+          color: "green",
+          title: "Success!",
+          message: "Your files have been fetched from the database.",
+        });
       }
     } catch (err) {
       console.log(err);
+      notifications.show({
+        color: "red",
+        title: "Oops!",
+        message: "There was an error in fetching your files from the database.",
+      });
     }
   };
 
@@ -511,7 +561,7 @@ const MainPage = () => {
     ReactPDF.render(<MyDocument />, "C:/Users/shaya/OneDrive/Documents PREV/My Projects/example.pdf");
   };
 
-  console.log(selectedFile !== null);
+  console.log(selectedFile);
 
   return (
     // <>
@@ -605,11 +655,26 @@ const MainPage = () => {
       {/* We provide a 'dimensions' context so that the components can be rendered differently based on the screen size. */}
       {/* <DimensionsContext.Provider value={smallScreen ? smallScreen : mediumScreen ? mediumScreen : bigScreen}> */}
       <Stack className="App" h="100vh" gap="0">
-        <Toolbar fileExplorerOpened={fileExplorerOpened} onToggle={toggle} editorOrViewer={editorOrViewer} setEditorOrViewer={setEditorOrViewer} />
-        <Stack justify="center" c="dark.2" style={{ flexShrink: 0, flexGrow: 1 }} gap="0">
+        <Toolbar
+          fileExplorerOpened={fileExplorerOpened}
+          onToggle={toggle}
+          editorOrViewer={editorOrViewer}
+          setEditorOrViewer={setEditorOrViewer}
+          recentFileTabs={recentFileTabs}
+          onSelectFile={handleSelectFile}
+          isLoggedIn={isLoggedIn}
+          setIsLoggedIn={setIsLoggedIn}
+          onSaveToState={handleSaveFilesToState}
+          onSaveToDB={handleSaveToDB}
+          onFetchFromDB={handleFetchDataFromDB}
+          onLogout={logout}
+          canSaveToDB={canSaveToDB}
+        />
+        <Divider m="0" />
+        <Stack justify={selectedFile === null ? "center" : "flex-start"} c="dark.2" style={{ flexShrink: 0, flexGrow: 1 }} gap="0">
           {selectedFile !== null ? (
             <>
-              <Text bg="dark.9" px="5" py="1" fw={500}>
+              <Text px="5" py="1" fw={500}>
                 {selectedFile.name}
               </Text>
               {editorOrViewer === "editor" ? <MarkdownEditor isFileSelected={selectedFile !== null} body={textEditor} onChange={handleChangeTextEditor} /> : <MarkdownViewer body={textEditor} />}

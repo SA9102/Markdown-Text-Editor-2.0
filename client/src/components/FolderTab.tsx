@@ -9,11 +9,11 @@ import FolderType from "../types/FolderType";
 import FileType from "../types/FileType";
 
 // Mantine
-import { ActionIcon, Group, TextInput, Text, Button, rem } from "@mantine/core";
+import { ActionIcon, Group, TextInput, Text, Button, rem, Divider } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
 // Tabler icons
-import { IconChevronDown, IconChevronRight, IconFolderFilled, IconFileFilled, IconTrashFilled, IconEdit, IconDotsVertical } from "@tabler/icons-react";
+import { IconChevronDown, IconChevronRight, IconFolderFilled, IconFileFilled, IconTrashFilled, IconEdit, IconDotsVertical, IconFolder, IconFolderOpen } from "@tabler/icons-react";
 import FolderEditOptions from "./FolderEditOptions";
 
 type FolderTabProps = {
@@ -42,14 +42,7 @@ const FolderTab = ({ folder, paddingLeft, onUpdateName, onToggleExpand, onToggle
 
   return (
     <>
-      <Group
-        align="center"
-        h="2rem"
-        bg="dark"
-        style={{ paddingLeft: `${paddingLeft}rem`, borderTop: "1px solid black", borderBottom: "1px solid black" }}
-        onMouseOver={() => setIsHover(true)}
-        onMouseOut={() => setIsHover(false)}
-      >
+      <Group align="center" h="2rem" style={{ paddingLeft: `${paddingLeft}rem` }} onMouseOver={() => setIsHover(true)} onMouseOut={() => setIsHover(false)}>
         {folder.isEditingName ? (
           <>
             <TextInput
@@ -75,9 +68,9 @@ const FolderTab = ({ folder, paddingLeft, onUpdateName, onToggleExpand, onToggle
           <Group justify="space-between" w="100%">
             <Group>
               {folder.isExpand ? (
-                <IconChevronDown size="1rem" onClick={() => onToggleExpand(folder.parentFolderIds, folder.id, false)} />
+                <IconFolderOpen size="1rem" onClick={() => onToggleExpand(folder.parentFolderIds, folder.id, false)} />
               ) : (
-                <IconChevronRight size="1rem" onClick={() => onToggleExpand(folder.parentFolderIds, folder.id, true)} />
+                <IconFolder size="1rem" onClick={() => onToggleExpand(folder.parentFolderIds, folder.id, true)} />
               )}
               <Text size="sm">{folder.name}</Text>
             </Group>
@@ -103,6 +96,7 @@ const FolderTab = ({ folder, paddingLeft, onUpdateName, onToggleExpand, onToggle
           </Group>
         )}
       </Group>
+      <Divider />
       {folder.items.map((item) => {
         if (isFolder(item)) {
           if (folder.isExpand) {

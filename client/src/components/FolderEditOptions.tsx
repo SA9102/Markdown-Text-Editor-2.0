@@ -22,15 +22,7 @@ const FolderEditOptions = ({ folderId, parentFolderIds, onEditName, onAddItem, o
           <Menu.Item onClick={() => onEditName(parentFolderIds, folderId)} leftSection={<IconCursorText style={iconStyle} />}>
             Rename
           </Menu.Item>
-          <Menu.Item
-            onClick={() => {
-              onToggleExpand(parentFolderIds, folderId, true);
-              onAddItem(parentFolderIds, folderId, "Folder");
-            }}
-            leftSection={<IconFolder style={iconStyle} />}
-          >
-            Add Folder
-          </Menu.Item>
+
           <Menu.Item
             onClick={() => {
               onToggleExpand(parentFolderIds, folderId, true);
@@ -39,6 +31,15 @@ const FolderEditOptions = ({ folderId, parentFolderIds, onEditName, onAddItem, o
             leftSection={<IconFile style={iconStyle} />}
           >
             Add File
+          </Menu.Item>
+          <Menu.Item
+            onClick={() => {
+              onToggleExpand(parentFolderIds, folderId, true);
+              onAddItem(parentFolderIds, folderId, "Folder");
+            }}
+            leftSection={<IconFolder style={iconStyle} />}
+          >
+            Add Folder
           </Menu.Item>
           <Menu.Item onClick={() => onDelete(parentFolderIds, folderId, "Folder")} color="red" leftSection={<IconTrash style={iconStyle} />}>
             Delete

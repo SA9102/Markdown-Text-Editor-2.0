@@ -3,9 +3,10 @@ import { useState } from "react";
 
 // Types
 import FileType from "../types/FileType";
-import { Button, Group, Text, TextInput } from "@mantine/core";
 import FileEditOptions from "./FileEditOptions";
 
+// Mantine
+import { Button, Divider, Group, Text, TextInput } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
 type FileTabProps = {
@@ -27,42 +28,90 @@ const FileTab = ({ file, paddingLeft, onDelete, onToggleEdit, onAddFileTab, onUp
   const bigScreen = useMediaQuery("(max-width: 75em");
 
   return (
-    <Group
-      align="center"
-      h="2rem"
-      bg="dark.6"
-      style={{ paddingLeft: `${paddingLeft}rem`, borderTop: "1px solid black", borderBottom: "1px solid black" }}
-      onMouseOver={() => setIsHover(true)}
-      onMouseOut={() => setIsHover(false)}
-    >
-      {file.isEditingName ? (
-        <>
-          <TextInput
-            size="compact-xs"
-            type="text"
-            rightSection={
-              <Button
-                variant="transparent"
-                size="compact-xs"
-                onClick={() => {
-                  onToggleEdit(file.parentFolderIds, file.id);
-                  onUpdateName(file.parentFolderIds, file.id, newName);
-                }}
-              >
-                Save
-              </Button>
+    <>
+      {/* <Group
+        align="center"
+        h="2rem"
+        // bg="dark.6"
+        bg="red"
+        style={{ paddingLeft: `${paddingLeft}rem`, borderTop: "1px solid black", borderBottom: "1px solid black" }}
+        onMouseOver={() => setIsHover(true)}
+        onMouseOut={() => setIsHover(false)}
+      >
+        {file.isEditingName ? (
+          <>
+            <TextInput
+              size="compact-xs"
+              type="text"
+              rightSection={
+                <Button
+                  variant="transparent"
+                  size="compact-xs"
+                  onClick={() => {
+                    onToggleEdit(file.parentFolderIds, file.id);
+                    onUpdateName(file.parentFolderIds, file.id, newName);
+                  }}
+                >
+                  Save
+                </Button>
+              }
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+            />
+          </>
+        ) : (
+          <Group
+            onClick={() => {
+              onSelectFile(file.id, file.parentFolderIds, file.name);
+            }}
+            justify="space-between"
+            // w="100%"
+          >
+            <Text size="sm">{file.name}</Text>
+          </Group>
+        )}
+      </Group> */}
+
+      <Group gap="0" h="2rem" style={{ paddingLeft: `${paddingLeft}rem` }}>
+        <Group
+          onClick={() => {
+            if (!file.isEditingName) {
+              onSelectFile(file.id, file.parentFolderIds, file.name);
             }
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-          />
-        </>
-      ) : (
-        <Group justify="space-between" w="100%">
-          <Text size="sm">{file.name}</Text>
-          {(smallScreen || mediumScreen) && <FileEditOptions fileId={file.id} parentFolderIds={file.parentFolderIds} onEditName={onToggleEdit} onDelete={onDelete} />}
+          }}
+          style={{ flexGrow: 1 }}
+        >
+          {file.isEditingName ? (
+            <>
+              <TextInput
+                size="compact-xs"
+                type="text"
+                rightSection={
+                  <Button
+                    variant="transparent"
+                    size="compact-xs"
+                    onClick={() => {
+                      onToggleEdit(file.parentFolderIds, file.id);
+                      console.log("UPDATE NAME");
+                      console.log(newName);
+                      onUpdateName(file.parentFolderIds, file.id, newName);
+                    }}
+                  >
+                    Save
+                  </Button>
+                }
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+              />
+            </>
+          ) : (
+            <Text size="sm">{file.name}</Text>
+          )}
         </Group>
-      )}
-    </Group>
+        {(smallScreen || mediumScreen) && !file.isEditingName && <FileEditOptions fileId={file.id} parentFolderIds={file.parentFolderIds} onEditName={onToggleEdit} onDelete={onDelete} />}
+      </Group>
+      <Divider />
+    </>
   );
 };
 

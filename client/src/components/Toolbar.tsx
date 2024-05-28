@@ -1,37 +1,103 @@
-import { Group, SegmentedControl, Button, ActionIcon, useMantineColorScheme, rem } from "@mantine/core";
+import { Group, SegmentedControl, Button, ActionIcon, useMantineColorScheme, rem, Divider, Notification, VisuallyHidden, ScrollArea } from "@mantine/core";
 
-import { IconFolderOpen } from "@tabler/icons-react";
+import { IconDatabaseImport, IconDeviceFloppy, IconEye, IconFileImport, IconFolderOpen, IconLogout2, IconPencil } from "@tabler/icons-react";
 import SettingsButton from "./SettingsButton";
+import SelectRecentFileButton from "./SelectRecentFileButton";
+import LoginButton from "./LoginButton";
+import RegisterButton from "./RegisterButton";
+import iconStyle from "../utils/iconStyle";
 
-const Toolbar = ({ fileExplorerOpened, onToggle, editorOrViewer, setEditorOrViewer }) => {
+const Toolbar = ({
+  fileExplorerOpened,
+  onToggle,
+  editorOrViewer,
+  setEditorOrViewer,
+  recentFileTabs,
+  onSelectFile,
+  isLoggedIn,
+  setIsLoggedIn,
+  onSaveToState,
+  onSaveToDB,
+  onFetchFromDB,
+  onLogout,
+  canSaveToDB,
+}) => {
   const { colorScheme, setColorScheme } = useMantineColorScheme();
 
-  return (
-    <Group align="center" gap="xs" m="0" p="xs" bg={colorScheme === "light" ? "dark.1" : "dark"}>
-      <ActionIcon onClick={onToggle} aria-label="File Explorer Drawer">
-        <IconFolderOpen style={{ width: rem(16), height: rem(16) }} />
-      </ActionIcon>
-      <SegmentedControl
-        withItemsBorders={false}
-        size="xs"
-        value={editorOrViewer}
-        onChange={setEditorOrViewer}
-        bg={colorScheme === "light" ? "dark.2" : "dark.9"}
-        data={[
-          { label: "Editor", value: "editor" },
-          { label: "Viewer", value: "viewer" },
-        ]}
-      />
+  const editorOrViewerComponent = (
+    <SegmentedControl
+      withItemsBorders={false}
+      size="xs"
+      value={editorOrViewer}
+      onChange={setEditorOrViewer}
+      data={[
+        {
+          value: "editor",
+          label: (
+            <>
+              <IconPencil style={iconStyle} />
+              <VisuallyHidden>Editor</VisuallyHidden>
+            </>
+          ),
+        },
+        {
+          value: "viewer",
+          label: (
+            <>
+              <IconEye style={iconStyle} />
+              <VisuallyHidden>Code</VisuallyHidden>
+            </>
+          ),
+        },
+      ]}
+    />
+  );
 
-      <SettingsButton />
+  return (
+    // <ScrollArea.Autosize w="400" h={50}>
+    <Group align="center" gap="xs" m="0" p="xs">
+      <ActionIcon color="orange.8" onClick={onToggle} aria-label="File Explorer Drawer">
+        <IconFolderOpen style={iconStyle} />
+      </ActionIcon>
+      <SelectRecentFileButton recentFileTabs={recentFileTabs} onSelectFile={onSelectFile} />
+
       {/* <Button bg="red.5" size="xs" variant="outline"> */}
       {/* <Button size="compact-sm">Login</Button>
           <Button size="compact-sm">Register</Button> */}
-      <Button.Group>
-        <Button size="xs">Login</Button>
-        <Button size="xs">Register</Button>
-      </Button.Group>
+      {editorOrViewerComponent}
+      <Divider orientation="vertical" />
+      {isLoggedIn ? (
+        <>
+          <ActionIcon color="pink.8" onClick={onSaveToState}>
+            <IconDeviceFloppy style={iconStyle} />
+          </ActionIcon>
+          {canSaveToDB ? (
+            <ActionIcon color="pink.8" onClick={onSaveToDB}>
+              <IconDatabaseImport style={iconStyle} />
+            </ActionIcon>
+          ) : (
+            <ActionIcon disabled color="pink.8" onClick={onSaveToDB}>
+              <IconDatabaseImport style={iconStyle} />
+            </ActionIcon>
+          )}
+          <ActionIcon color="green.8" onClick={onFetchFromDB}>
+            <IconFileImport style={iconStyle} />
+          </ActionIcon>
+          <Divider orientation="vertical" />
+          <ActionIcon onClick={onLogout}>
+            <IconLogout2 style={iconStyle} />
+          </ActionIcon>
+        </>
+      ) : (
+        <ActionIcon.Group>
+          <LoginButton setIsLoggedIn={setIsLoggedIn} />
+          <RegisterButton setIsLoggedIn={setIsLoggedIn} />
+        </ActionIcon.Group>
+      )}
+      <Divider orientation="vertical" />
+      <SettingsButton />
     </Group>
+    // </ScrollArea.Autosize>
   );
 };
 
