@@ -89,10 +89,10 @@ const Toolbar = ({
           </ActionIcon>
         </>
       ) : (
-        <ActionIcon.Group>
+        <>
           <LoginButton setIsLoggedIn={setIsLoggedIn} />
           <RegisterButton setIsLoggedIn={setIsLoggedIn} />
-        </ActionIcon.Group>
+        </>
       )}
       <Divider orientation="vertical" />
       <SettingsButton />

@@ -11,7 +11,6 @@ const customFields = {
 };
 
 const verifyCallback = (username, password, done) => {
-  console.log('In verifyCallback...');
   User.findOne({ username: username })
     .then((user) => {
       if (!user) {
@@ -21,10 +20,8 @@ const verifyCallback = (username, password, done) => {
       const isValid = validatePassword(password, user.password, user.salt);
 
       if (isValid) {
-        console.log('IS VALID');
         return done(null, user);
       } else {
-        console.log('IS NOT VALID');
         return done(null, false);
       }
     })
@@ -38,12 +35,10 @@ const strategy = new LocalStrategy(customFields, verifyCallback);
 passport.use(strategy);
 
 passport.serializeUser((user, done) => {
-  console.log('IN SERIALIZE USER');
   done(null, user.id);
 });
 
 passport.deserializeUser((userId, done) => {
-  console.log('IN DESERIALIZE USER');
   User.findById(userId)
     .then((user) => {
       done(null, user);

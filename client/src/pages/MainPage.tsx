@@ -137,6 +137,8 @@ const MainPage = () => {
 
         case ACTIONS.ADD_ITEM:
           if (action.payload.idChain === null) {
+            console.log("INSIDE");
+            console.log(selectedFile);
             if (action.payload.itemType === "Folder") {
               draft.unshift({
                 id: uuidv4(),
@@ -195,6 +197,7 @@ const MainPage = () => {
           break;
 
         case ACTIONS.UPDATE_FILE_BODY:
+          console.log("IN UPDATE FILE BODY");
           for (let i = 0; i < action.payload.idChain.length; i++) {
             draft = draft.find((folder: FolderType) => folder.id === action.payload.idChain[i]).items;
           }
@@ -211,7 +214,11 @@ const MainPage = () => {
           console.log(action.payload.newItemName);
           draft.name = action.payload.newItemName;
           draft.isEditingName = false;
-          setSelectedFile({ ...selectedFile, name: action.payload.newItemName });
+          // if (!action.payload.newlyCreated) {
+          if (action.payload.targetItemId === selectedFile?.id) {
+            setSelectedFile({ ...selectedFile, name: action.payload.newItemName });
+          }
+          // }
           break;
 
         case ACTIONS.EDIT_ITEM:
@@ -332,9 +339,11 @@ const MainPage = () => {
 
   // Handles the updating of the folder name, when the user has saved the changes to the new name of the folder.
   const handleUpdateItemName = (idChain: string[], targetItemId: string, newItemName: string) => {
+    // const handleUpdateItemName = (idChain: string[], targetItemId: string, newItemName: string, newlyCreated: boolean) => {
     dispatch({
       type: ACTIONS.UPDATE_ITEM_NAME,
       payload: { idChain, targetItemId, newItemName },
+      // payload: { idChain, targetItemId, newItemName, newlyCreated },
     });
 
     // If it's a file, we also want to update the name displayed on its file tab.
@@ -406,6 +415,7 @@ const MainPage = () => {
         break;
       }
     }
+
     // If it's not there, then fetch it from the main 'data' state, and create a new array for 'editedFiles' holding
     // the relevant details for this file.
     if (!found) {
@@ -561,6 +571,7 @@ const MainPage = () => {
     ReactPDF.render(<MyDocument />, "C:/Users/shaya/OneDrive/Documents PREV/My Projects/example.pdf");
   };
 
+  // console.log("SELECTED FILE NAME");
   console.log(selectedFile);
 
   return (

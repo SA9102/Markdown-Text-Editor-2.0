@@ -53,7 +53,6 @@ app.post("/registerUser", async (req, res) => {
 });
 
 app.post("/loginUser", passport.authenticate("local"), (req, res, next) => {
-  console.log("OKKK");
   req.session.save();
   res.status(200).json(req.user);
 });

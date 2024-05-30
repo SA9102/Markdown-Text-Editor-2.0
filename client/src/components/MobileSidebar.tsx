@@ -12,14 +12,14 @@ const MobileSidebar = ({ data, onToggleExpandFolder, onUpdateItemName, onEditIte
     <Drawer p="0" size="100%" opened={fileExplorerOpened} onClose={onClose} withCloseButton={false} transitionProps={{ duration: 200, timingFunction: "ease" }}>
       <Group mb="lg">
         <CloseButton onClick={onClose} />
-        <ActionIcon.Group>
+        <Group gap="xs">
           <ActionIcon onClick={() => onAddItem(null, null, "File")}>
             <IconFileFilled style={iconStyle} />
           </ActionIcon>
           <ActionIcon onClick={() => onAddItem(null, null, "Folder")}>
             <IconFolderFilled style={iconStyle} />
           </ActionIcon>
-        </ActionIcon.Group>
+        </Group>
       </Group>
 
       {/* <Tooltip.Group openDelay={600} closeDelay={100}>

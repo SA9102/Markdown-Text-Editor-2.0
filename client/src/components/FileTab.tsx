@@ -22,6 +22,7 @@ type FileTabProps = {
 const FileTab = ({ file, paddingLeft, onDelete, onToggleEdit, onAddFileTab, onUpdateName, onSelectFile }: FileTabProps) => {
   const [isHover, setIsHover] = useState(false);
   const [newName, setNewName] = useState(file.name);
+  const [newlyCreated, setNewlyCreated] = useState(true);
 
   const smallScreen = useMediaQuery("(max-width: 36em");
   const mediumScreen = useMediaQuery("(max-width: 62em");
@@ -76,6 +77,7 @@ const FileTab = ({ file, paddingLeft, onDelete, onToggleEdit, onAddFileTab, onUp
         <Group
           onClick={() => {
             if (!file.isEditingName) {
+              console.log("FILE SELECTED");
               onSelectFile(file.id, file.parentFolderIds, file.name);
             }
           }}
@@ -95,6 +97,7 @@ const FileTab = ({ file, paddingLeft, onDelete, onToggleEdit, onAddFileTab, onUp
                       console.log("UPDATE NAME");
                       console.log(newName);
                       onUpdateName(file.parentFolderIds, file.id, newName);
+                      // onUpdateName(file.parentFolderIds, file.id, newName, newlyCreated);
                     }}
                   >
                     Save
