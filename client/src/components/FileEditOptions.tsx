@@ -1,12 +1,11 @@
 // Mantine
 import { ActionIcon, Menu, rem } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+
+// Tabler Icons
 import { IconDotsVertical, IconTrash, IconCursorText } from "@tabler/icons-react";
-import DeletionModal from "./DeletionModal";
 
 const FileEditOptions = ({ fileId, parentFolderIds, onEditName, onDelete }) => {
   const iconStyle = { width: rem(16), height: rem(16) };
-  const [opened, { open, close }] = useDisclosure(false);
 
   return (
     <>
@@ -27,7 +26,6 @@ const FileEditOptions = ({ fileId, parentFolderIds, onEditName, onDelete }) => {
           </Menu.Item>
         </Menu.Dropdown>
       </Menu>
-      {/* <DeletionModal opened={opened} onClose={close} /> */}
     </>
   );
 };

@@ -1,5 +1,8 @@
+// Mantine
 import { ActionIcon, Button, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+
+// Tabler Icons
 import { IconFileTime } from "@tabler/icons-react";
 
 const SelectRecentFileButton = ({ recentFileTabs, onSelectFile }) => {
@@ -7,7 +10,7 @@ const SelectRecentFileButton = ({ recentFileTabs, onSelectFile }) => {
 
   return (
     <>
-      <ActionIcon aria-label="Select recently-opened file" onClick={open}>
+      <ActionIcon color="cyan.8" aria-label="Select recently-opened file" onClick={open}>
         <IconFileTime style={{ width: "70%", height: "70%" }} stroke={1.5} />
       </ActionIcon>
       <Modal

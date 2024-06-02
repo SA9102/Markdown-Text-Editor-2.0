@@ -1,11 +1,18 @@
+// React
 import { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
-import { ActionIcon, Button, Modal, PasswordInput, Space, Text, TextInput, Title, rem } from "@mantine/core";
+// Mantine
+import { ActionIcon, Button, Modal, PasswordInput, Space, Text, TextInput, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useDisclosure } from "@mantine/hooks";
+
+// Tabler Icons
 import { IconLogin2 } from "@tabler/icons-react";
+
+// Other third-party packages
+import axios from "axios";
+
+// Utils
 import iconStyle from "../utils/iconStyle";
 
 const LoginButton = ({ setIsLoggedIn }) => {
@@ -16,18 +23,10 @@ const LoginButton = ({ setIsLoggedIn }) => {
   const [isLoginFail, setIsLoginFail] = useState(false);
   const [isServerError, setIsServerError] = useState(false);
 
-  // React Router hooks
-  const navigate = useNavigate(); // For redirecting to a different page on the front-end
-  // const [searchParams, setSearchParams] = useSearchParams(); // For extracting the query params from the URL
-  // console.log("SEARCH PARAMS");
-
-  // const theme = useMantineTheme();
-
   const handleSubmitForm = async () => {
     try {
       const res = await axios({ method: "post", url: "http://localhost:3000/loginUser", data: { username, password }, withCredentials: true });
       if (res.data.username) {
-        // navigate("/");
         setIsLoggedIn(true);
         close();
         notifications.show({
@@ -62,12 +61,6 @@ const LoginButton = ({ setIsLoggedIn }) => {
         }}
         transitionProps={{ transition: "fade", duration: 200, timingFunction: "ease" }}
       >
-        {/* <TextInput label="Username" value={username} onChange={(e) => setUsername(e.target.value)} withAsterisk />
-        <PasswordInput mt="md" label="Password" value={password} onChange={(e) => setPassword(e.target.value)} withAsterisk />
-        <Button mt="md" w="100%" onClick={handleSubmitForm}>
-          Log In
-        </Button> */}
-
         <Title order={1} size="h2">
           Sign into your account
         </Title>
@@ -91,7 +84,7 @@ const LoginButton = ({ setIsLoggedIn }) => {
         </Button>
       </Modal>
 
-      <ActionIcon variant="transparent" onClick={open}>
+      <ActionIcon color="orange.8" onClick={open}>
         <IconLogin2 style={iconStyle} />
       </ActionIcon>
     </>

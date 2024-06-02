@@ -1,15 +1,19 @@
-import { Drawer, CloseButton, Tooltip, ActionIcon, Group, Divider } from "@mantine/core";
+// Mantine
+import { Drawer, CloseButton, ActionIcon, Group, Divider } from "@mantine/core";
+
+// Tabler Icons
 import { IconFileFilled, IconFolderFilled } from "@tabler/icons-react";
 
+// Components
 import FileExplorerPanel from "./FileExplorerPanel";
 
+// Utils
 import iconStyle from "../utils/iconStyle";
 
-// This component is only for mobile devices.
-
-const MobileSidebar = ({ data, onToggleExpandFolder, onUpdateItemName, onEditItem, onAddFileTab, onAddItem, onDeleteItem, onSelectFile, fileExplorerOpened, onClose }) => {
+// --- THIS COMPONENT IS ONLY FOR MOBILE DEVICES ---
+const MobileSidebar = ({ data, selectedFileId, onToggleExpandFolder, onUpdateItemName, onEditItem, onAddFileTab, onAddItem, onDeleteItem, onSelectFile, fileExplorerOpened, onClose }) => {
   return (
-    <Drawer p="0" size="100%" opened={fileExplorerOpened} onClose={onClose} withCloseButton={false} transitionProps={{ duration: 200, timingFunction: "ease" }}>
+    <Drawer hiddenFrom="md" p="0" size="100%" opened={fileExplorerOpened} onClose={onClose} withCloseButton={false} transitionProps={{ duration: 200, timingFunction: "ease" }}>
       <Group mb="lg">
         <CloseButton onClick={onClose} />
         <Group gap="xs">
@@ -22,23 +26,11 @@ const MobileSidebar = ({ data, onToggleExpandFolder, onUpdateItemName, onEditIte
         </Group>
       </Group>
 
-      {/* <Tooltip.Group openDelay={600} closeDelay={100}>
-        <Tooltip label="New File" withArrow arrowSize={5}>
-          <ActionIcon size="lg" variant="subtle" onClick={() => onAddItem(null, null, "File")}>
-            <IconFileFilled />
-          </ActionIcon>
-        </Tooltip>
-        <Tooltip label="New Folder" withArrow arrowSize={5}>
-          <ActionIcon size="lg" variant="subtle" onClick={() => onAddItem(null, null, "Folder")}>
-            <IconFolderFilled />
-          </ActionIcon>
-        </Tooltip>
-      </Tooltip.Group> */}
-
       {data.length > 0 && <Divider />}
 
       <FileExplorerPanel
         data={data}
+        selectedFileId={selectedFileId}
         onToggleExpand={onToggleExpandFolder}
         onUpdateName={onUpdateItemName}
         onToggleEdit={onEditItem}

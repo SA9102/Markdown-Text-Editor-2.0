@@ -1,7 +1,7 @@
 // React
 import { useState } from "react";
 
-// Custom components
+// Components
 import FileTab from "./FileTab";
 
 // Types
@@ -9,15 +9,16 @@ import FolderType from "../types/FolderType";
 import FileType from "../types/FileType";
 
 // Mantine
-import { ActionIcon, Group, TextInput, Text, Button, rem, Divider } from "@mantine/core";
+import { Group, TextInput, Text, Button, Divider } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
 // Tabler icons
-import { IconChevronDown, IconChevronRight, IconFolderFilled, IconFileFilled, IconTrashFilled, IconEdit, IconDotsVertical, IconFolder, IconFolderOpen } from "@tabler/icons-react";
+import { IconFolder, IconFolderOpen } from "@tabler/icons-react";
 import FolderEditOptions from "./FolderEditOptions";
 
 type FolderTabProps = {
   folder: FolderType;
+  selectedFileId: string | undefined;
   paddingLeft: number;
   onDelete: (arg0: string[], arg1: string, arg2: string) => void;
   onToggleEdit: (arg0: string[], arg1: string) => void;
@@ -32,33 +33,67 @@ const isFolder = (item: FolderType | FileType): item is FolderType => {
   return (item as FolderType).isExpand !== undefined;
 };
 
-const FolderTab = ({ folder, paddingLeft, onUpdateName, onToggleExpand, onToggleEdit, onAddFileTab, onAdd, onDelete, onSelectFile }: FolderTabProps) => {
+const FolderTab = ({ folder, selectedFileId, paddingLeft, onUpdateName, onToggleExpand, onToggleEdit, onAddFileTab, onAdd, onDelete, onSelectFile }: FolderTabProps) => {
   const [isHover, setIsHover] = useState(false);
   const [newName, setNewName] = useState(folder.name);
-
-  const smallScreen = useMediaQuery("(max-width: 36em");
-  const mediumScreen = useMediaQuery("(max-width: 62em");
-  const bigScreen = useMediaQuery("(max-width: 75em");
+  const [newlyCreated, setNewlyCreated] = useState(true);
 
   return (
     <>
-      <Group align="center" h="2rem" style={{ paddingLeft: `${paddingLeft}rem` }} onMouseOver={() => setIsHover(true)} onMouseOut={() => setIsHover(false)}>
+      <Group
+        align="center"
+        h="2rem"
+        style={{ paddingLeft: `${paddingLeft}rem`, cursor: "pointer" }}
+        onClick={() => onToggleExpand(folder.parentFolderIds, folder.id, folder.isExpand ? false : true)}
+        onMouseOver={() => setIsHover(true)}
+        onMouseOut={() => setIsHover(false)}
+      >
         {folder.isEditingName ? (
           <>
             <TextInput
               size="compact-xs"
+              w="215px"
               type="text"
               rightSection={
-                <Button
-                  variant="transparent"
-                  size="compact-xs"
-                  onClick={() => {
-                    onToggleEdit(folder.parentFolderIds, folder.id);
-                    onUpdateName(folder.parentFolderIds, folder.id, newName);
-                  }}
-                >
-                  Save
-                </Button>
+                newlyCreated ? (
+                  <Button.Group>
+                    <Button
+                      variant="transparent"
+                      size="compact-xs"
+                      onClick={() => {
+                        if (newName.trim() !== "") {
+                          onToggleEdit(folder.parentFolderIds, folder.id);
+                          onUpdateName(folder.parentFolderIds, folder.id, newName);
+                          setNewlyCreated(false);
+                        }
+                      }}
+                    >
+                      Save
+                    </Button>
+                    <Button
+                      variant="transparent"
+                      size="compact-xs"
+                      onClick={() => {
+                        onDelete(folder.parentFolderIds, folder.id, "Folder");
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </Button.Group>
+                ) : (
+                  <Button
+                    variant="transparent"
+                    size="compact-xs"
+                    onClick={() => {
+                      if (newName.trim() !== "") {
+                        onToggleEdit(folder.parentFolderIds, folder.id);
+                        onUpdateName(folder.parentFolderIds, folder.id, newName);
+                      }
+                    }}
+                  >
+                    Save
+                  </Button>
+                )
               }
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
@@ -67,32 +102,12 @@ const FolderTab = ({ folder, paddingLeft, onUpdateName, onToggleExpand, onToggle
         ) : (
           <Group justify="space-between" w="100%">
             <Group>
-              {folder.isExpand ? (
-                <IconFolderOpen size="1rem" onClick={() => onToggleExpand(folder.parentFolderIds, folder.id, false)} />
-              ) : (
-                <IconFolder size="1rem" onClick={() => onToggleExpand(folder.parentFolderIds, folder.id, true)} />
-              )}
-              <Text size="sm">{folder.name}</Text>
+              {folder.isExpand ? <IconFolderOpen size="1rem" /> : <IconFolder size="1rem" />}
+              <Text size="sm" className="name">
+                {folder.name}
+              </Text>
             </Group>
-            {(smallScreen || mediumScreen) && (
-              <FolderEditOptions folderId={folder.id} parentFolderIds={folder.parentFolderIds} onEditName={onToggleEdit} onAddItem={onAdd} onDelete={onDelete} onToggleExpand={onToggleExpand} />
-            )}
-            {/* {isHover && (
-              <>
-                <ActionIcon color="primary" variant="light" onClick={() => onAdd(folder.parentFolderIds, folder.id, "File")}>
-                  <IconFileFilled />
-                </ActionIcon>
-                <ActionIcon color="primary" variant="light" onClick={() => onAdd(folder.parentFolderIds, folder.id, "Folder")}>
-                  <IconFolderFilled />
-                </ActionIcon>
-                <ActionIcon color="primary" variant="light" onClick={() => onToggleEdit(folder.parentFolderIds, folder.id)}>
-                  <IconEdit />
-                </ActionIcon>
-                <ActionIcon color="primary" variant="light" onClick={() => onDelete(folder.parentFolderIds, folder.id, "folder")}>
-                  <IconTrashFilled />
-                </ActionIcon>
-              </>
-            )} */}
+            <FolderEditOptions folderId={folder.id} parentFolderIds={folder.parentFolderIds} onEditName={onToggleEdit} onAddItem={onAdd} onDelete={onDelete} onToggleExpand={onToggleExpand} />
           </Group>
         )}
       </Group>
@@ -103,6 +118,7 @@ const FolderTab = ({ folder, paddingLeft, onUpdateName, onToggleExpand, onToggle
             return (
               <FolderTab
                 key={item.id}
+                selectedFileId={selectedFileId}
                 folder={item}
                 paddingLeft={paddingLeft + 1}
                 onToggleExpand={onToggleExpand}
@@ -120,6 +136,7 @@ const FolderTab = ({ folder, paddingLeft, onUpdateName, onToggleExpand, onToggle
             return (
               <FileTab
                 key={item.id}
+                selectedFileId={selectedFileId}
                 file={item}
                 paddingLeft={paddingLeft + 1}
                 onDelete={onDelete}

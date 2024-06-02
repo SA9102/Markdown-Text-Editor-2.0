@@ -1,13 +1,19 @@
+// React
 import { useState } from "react";
+
+// Mantine
+import { ActionIcon, Button, Modal, PasswordInput, Space, Text, TextInput, Title } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
+
+// Tabler Icons
+import { IconUserPlus } from "@tabler/icons-react";
+
+// Other third-party packages
 import axios from "axios";
 
-import { ActionIcon, Button, Modal, PasswordInput, Space, Stack, Text, TextInput, Title, rem } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { IconUserPlus } from "@tabler/icons-react";
+// Utils
 import iconStyle from "../utils/iconStyle";
-import { useNavigate } from "react-router-dom";
-
-import { notifications } from "@mantine/notifications";
 
 const RegisterButton = ({ setIsLoggedIn }) => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -20,9 +26,6 @@ const RegisterButton = ({ setIsLoggedIn }) => {
   const [isInvalidUsername, setIsInvalidUsername] = useState(false);
   const [isInvalidPassword, setIsInvalidPassword] = useState(false);
   const [isPasswordMismatch, setIsPasswordMismatch] = useState(false);
-
-  // React Router hooks
-  const navigate = useNavigate();
 
   const handleSubmitForm = async () => {
     let illegalFlag = false;
@@ -61,7 +64,6 @@ const RegisterButton = ({ setIsLoggedIn }) => {
       const res = await axios({ method: "post", url: "http://localhost:3000/registerUser", data: { username, password } });
       console.log(res);
       if (res.data.success) {
-        // navigate("/login?success=true");
         setIsLoggedIn(true);
         close();
         notifications.show({
@@ -83,7 +85,6 @@ const RegisterButton = ({ setIsLoggedIn }) => {
       <Modal
         opened={opened}
         onClose={close}
-        // title="Create An Account"
         withCloseButton={false}
         overlayProps={{
           backgroundOpacity: 0.55,
@@ -91,15 +92,6 @@ const RegisterButton = ({ setIsLoggedIn }) => {
         }}
         transitionProps={{ transition: "fade", duration: 200, timingFunction: "ease" }}
       >
-        {/* <Title order={1} size="h3">
-          Create an account
-        </Title>
-        <TextInput label="Username" value={username} onChange={(e) => setUsername(e.target.value)} withAsterisk />
-        <PasswordInput mt="md" label="Password" value={password} onChange={(e) => setPassword(e.target.value)} withAsterisk />
-        <PasswordInput mt="md" label="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} withAsterisk />
-        <Button mt="md" w="100%">
-          Register
-        </Button> */}
         <Title order={1} size="h2">
           Create an account
         </Title>
@@ -143,7 +135,7 @@ const RegisterButton = ({ setIsLoggedIn }) => {
         </Button>
       </Modal>
 
-      <ActionIcon variant="transparent" onClick={open}>
+      <ActionIcon color="orange.8" onClick={open}>
         <IconUserPlus style={iconStyle} />
       </ActionIcon>
     </>

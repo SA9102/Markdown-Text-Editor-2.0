@@ -1,10 +1,13 @@
-import { useContext } from "react";
+// Mantine
+import { Menu, ActionIcon, useMantineColorScheme } from "@mantine/core";
 
-import { Menu, ActionIcon, rem, useCombobox, Combobox, useMantineColorScheme } from "@mantine/core";
-import { IconAdjustments, IconMoon, IconSun } from "@tabler/icons-react";
+// Tabler Icons
+import { IconAdjustments, IconEyeCode, IconMoon, IconPencilCode, IconSun } from "@tabler/icons-react";
+
+// Utils
+import iconStyle from "../utils/iconStyle";
 
 const SettingsButton = () => {
-  const combobox = useCombobox();
   const { colorScheme, setColorScheme } = useMantineColorScheme();
 
   return (
@@ -18,14 +21,20 @@ const SettingsButton = () => {
       <Menu.Dropdown>
         <Menu.Label>Settings</Menu.Label>
         {colorScheme === "dark" ? (
-          <Menu.Item onClick={() => setColorScheme("light")} leftSection={<IconSun style={{ width: rem(16), height: rem(16) }} />}>
+          <Menu.Item onClick={() => setColorScheme("light")} leftSection={<IconSun style={iconStyle} />}>
             Light mode
           </Menu.Item>
         ) : (
-          <Menu.Item onClick={() => setColorScheme("dark")} leftSection={<IconMoon style={{ width: rem(16), height: rem(16) }} />}>
+          <Menu.Item onClick={() => setColorScheme("dark")} leftSection={<IconMoon style={iconStyle} />}>
             Dark mode
           </Menu.Item>
         )}
+        <Menu.Item onClick={() => {}} leftSection={<IconPencilCode style={iconStyle} />}>
+          Editor Font
+        </Menu.Item>
+        <Menu.Item onClick={() => {}} leftSection={<IconEyeCode style={iconStyle} />}>
+          Viewer Font
+        </Menu.Item>
       </Menu.Dropdown>
     </Menu>
   );

@@ -1,0 +1,99 @@
+* {
+  /* box-sizing: border-box; */
+}
+
+.file-tab:hover {
+  cursor: pointer;
+
+  @mixin light {
+    background-color: var(--mantine-color-gray-1);
+  }
+
+  @mixin dark {
+    background-color: var(--mantine-color-dark-8);
+  }
+}
+
+.file-tab-selected {
+  cursor: pointer;
+
+  @mixin light {
+    background-color: var(--mantine-color-gray-2);
+  }
+
+  @mixin dark {
+    background-color: var(--mantine-color-dark-9);
+  }
+}
+
+.editor {
+  resize: none;
+  height: 100%;
+  outline: none;
+  border: none;
+  padding: 1rem;
+
+  @mixin light {
+    background-color: var(--mantine-color-gray-1);
+  }
+
+  @mixin dark {
+    background-color: var(--mantine-color-dark-8);
+  }
+}
+
+.editor,
+.viewer {
+  flex: 1 1 0;
+  height: 100%;
+  width: 100%;
+}
+
+.viewer {
+  word-break: keep-all;
+  font-family: "Open Sans", sans-serif;
+}
+
+.name {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}
+
+/* 
+.recent-file-tabs-container {
+  width: 100%;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+
+.recent-file-tab {
+  padding: 0.3rem 1rem;
+}
+
+.recent-file-tab:hover {
+  cursor: pointer;
+}
+
+.recent-file-tab-selected {
+  @mixin light {
+    background-color: red;
+  }
+
+  @mixin dark {
+    background-color: var(--mantine-color-dark-7);
+    border: 1px solid var(--mantine-color-dark-7);
+  }
+}
+
+.recent-file-tab-not-selected {
+  @mixin light {
+    background-color: red;
+  }
+
+  @mixin dark {
+    background-color: var(--mantine-color-dark-5);
+    border: 1px solid var(--mantine-color-dark-5);
+  }
+} */

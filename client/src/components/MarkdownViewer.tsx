@@ -1,4 +1,7 @@
+// Mantine
 import { Box } from "@mantine/core";
+
+// Other third-party packages
 import Markdown from "marked-react";
 
 type MarkdownViewerProps = {
@@ -7,7 +10,7 @@ type MarkdownViewerProps = {
 
 const MarkdownViewer = ({ body }: MarkdownViewerProps) => {
   return (
-    <Box p="xs">
+    <Box style={{ overflowY: "scroll" }} className="viewer" h="100%" p="sm">
       <Markdown>{body}</Markdown>
     </Box>
   );
