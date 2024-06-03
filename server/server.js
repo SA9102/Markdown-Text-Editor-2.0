@@ -9,7 +9,9 @@ const generatePassword = require("./lib/passwordUtils").generatePassword;
 const User = require("./models/User");
 const Folder = require("./models/Folder");
 const File = require("./models/File");
-require("dotenv").config();
+
+const PORT = process.env.PORT || 3000;
+// require("dotenv").config();
 
 const app = express();
 
@@ -105,6 +107,6 @@ app.get("/getData", async (req, res) => {
   }
 });
 
-app.listen(process.env.PORT, () => {
-  console.log(`Listening on port ${process.env.PORT}`);
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
 });
