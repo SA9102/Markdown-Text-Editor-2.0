@@ -19,14 +19,14 @@ require("./config/passport");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: "https://localhost:5173", credentials: true }));
-// app.use(cors({ origin: "https://Markdown-Text-Editor-2.0.onrender.com", credentials: true }));
+// app.use(cors({ origin: "https://localhost:5173", credentials: true }));
+app.use(cors({ origin: "https://markdown-text-editor-2-0.onrender.com", credentials: true }));
 app.use(
   session({
     secret: "my secret",
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: "mongodb+srv://shayan677:r2YJ8RBFa3lqcoLa@mte.o8xa9na.mongodb.net/?retryWrites=true&w=majority&appName=mte", collectionName: "sessions" }),
+    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI, collectionName: "sessions" }),
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,
     },
