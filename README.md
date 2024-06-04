@@ -6,7 +6,7 @@
 
 The app is hosted on Render.
 
-**:warning: To view the application, firstly please click on the link below to start the server. Due to the limits of Render's free tier, please allow for up to a minute for the server to start up.**
+**:warning: To view the application, firstly please click on the link below to start the server. Due to the limits of Render's free tier, please allow for up to a minute for the server to start up. When the server starts, you will be redirected to a page confirming that it is running.**
 
  -> [Click here to start the server](https://mte2-backend.onrender.com) <-
 
