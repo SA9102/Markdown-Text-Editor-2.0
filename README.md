@@ -36,6 +36,10 @@ I may implement these features in future versions:
 
 ## Update Log
 
+### 4th June 2024
+
+- You can now view this project on Render.
+
 ### 2nd June 2024
 
 - Markdown Text Editor 2.0 published to GitHub :fireworks:
