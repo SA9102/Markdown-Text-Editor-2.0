@@ -10,7 +10,7 @@ The app is hosted on Render.
 
  -> [Click here to start the server](https://mte2-backend.onrender.com) <-
 
-Once the server is up and running, you can now view the application.
+Once the server is up and running, you can view the application.
 
  -> [Click here to view the application](https://markdown-text-editor-2-0.onrender.com/) <-
 
