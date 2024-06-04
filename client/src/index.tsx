@@ -16,13 +16,6 @@ import "./index.css";
 axios.defaults.withCredentials = true;
 
 const theme = createTheme({
-  // colors: {
-  //   primary: virtualColor({
-  //     name: 'primary',
-  //     light: 'indigo',
-  //     dark: 'orange',
-  //   }),
-  // },
   components: {
     Tooltip: Tooltip.extend({
       defaultProps: {
@@ -34,13 +27,9 @@ const theme = createTheme({
   defaultRadius: "md",
 });
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  // <React.StrictMode>
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <MantineProvider defaultColorScheme="auto" theme={theme}>
-    {/* <BrowserRouter> */}
     <Notifications />
     <App />
-    {/* </BrowserRouter> */}
   </MantineProvider>
-  // </React.StrictMode>
 );
