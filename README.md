@@ -2,6 +2,18 @@
 
 **A revamped and redesigned version of my previous Markdown Text Editor, featuring a nested file-folder system, the ability to create an account and save your files permanently, and a better user interface for screens of all sizes.**
 
+## Application
+
+The app is hosted on Render.
+
+**:warning: To view the application, firstly please click on the link below to start the server. Due to the limits of Render's free tier, please allow for up to a minute for the server to start up.**
+
+ -> [Click here to start the server](https://mte2-backend.onrender.com) <-
+
+Once the server is up and running, you can now view the application.
+
+ -> [Click here to view the application](https://markdown-text-editor-2-0.onrender.com/) <-
+
 ## Overview
 
 - The front-end is redone with TypeScript, and since it now uses a database (specifically MongoDB), it connects to an Express server. (made with just vanilla JavaScript).
