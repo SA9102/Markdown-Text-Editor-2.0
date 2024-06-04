@@ -14,6 +14,7 @@ Once the server is up and running, you can view the application.
 
  -> [Click here to view the application](https://markdown-text-editor-2-0.onrender.com/) <-
 
+ You can still view the application without the server, but you won't be able to log in or create an account.
 
 https://github.com/SA9102/Markdown-Text-Editor-2.0/assets/96877426/e29a7387-454c-4a05-880c-bb3b1c6e0988
 
