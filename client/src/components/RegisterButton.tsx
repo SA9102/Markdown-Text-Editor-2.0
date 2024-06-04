@@ -65,7 +65,7 @@ const RegisterButton = ({ setIsLoggedIn }: props) => {
     // If the credentials are valid, send them to the server
     try {
       setIsServerError(false);
-      const res = await axios({ method: "post", url: "http://localhost:3000/registerUser", data: { username, password } });
+      const res = await axios({ method: "post", url: "https://mte2-backend.onrender.com/registerUser", data: { username, password } });
       console.log(res);
       if (res.data.success) {
         setIsLoggedIn(true);

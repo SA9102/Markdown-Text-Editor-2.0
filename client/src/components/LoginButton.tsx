@@ -29,7 +29,7 @@ const LoginButton = ({ setIsLoggedIn }: props) => {
 
   const handleSubmitForm = async () => {
     try {
-      const res = await axios({ method: "post", url: "http://localhost:3000/loginUser", data: { username, password }, withCredentials: true });
+      const res = await axios({ method: "post", url: "https://mte2-backend.onrender.com/loginUser", data: { username, password }, withCredentials: true });
       if (res.data.username) {
         setIsLoggedIn(true);
         close();

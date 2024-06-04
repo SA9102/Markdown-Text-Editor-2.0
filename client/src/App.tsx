@@ -82,7 +82,7 @@ const MainPage = () => {
   const { colorScheme, setColorScheme } = useMantineColorScheme();
 
   useEffect(() => {
-    axios({ method: "get", url: "http://localhost:3000/getUser" })
+    axios({ method: "get", url: "https://mte2-backend.onrender.com/getUser" })
       .then((res) => {
         if (res.data.user) {
           console.log("LOGGED IN");
@@ -496,7 +496,7 @@ const MainPage = () => {
 
   const logout = async () => {
     try {
-      const res = await axios({ method: "get", url: "http://localhost:3000/logout" });
+      const res = await axios({ method: "get", url: "https://mte2-backend.onrender.com/logout" });
       setIsLoggedIn(false);
       setSelectedFile(null);
       setTextEditor("");
@@ -515,7 +515,7 @@ const MainPage = () => {
 
   const handleSaveToDB = async () => {
     try {
-      const res = await axios({ method: "post", url: "http://localhost:3000/saveData", data: { data: JSON.stringify(data) } });
+      const res = await axios({ method: "post", url: "https://mte2-backend.onrender.com/saveData", data: { data: JSON.stringify(data) } });
       console.log(res);
       notifications.show({
         color: "green",
@@ -534,7 +534,7 @@ const MainPage = () => {
 
   const handleFetchDataFromDB = async () => {
     try {
-      const res = await axios({ method: "get", url: "http://localhost:3000/getData" });
+      const res = await axios({ method: "get", url: "https://mte2-backend.onrender.com/getData" });
       console.log(res);
       if (res.data.data) {
         setSelectedFile(null);
