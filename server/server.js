@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const session = require("express-session");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -17,6 +18,7 @@ const app = express();
 
 require("./config/passport");
 
+app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // app.use(cors({ origin: "https://localhost:5173", credentials: true }));
@@ -106,6 +108,10 @@ app.get("/getData", async (req, res) => {
     console.log(err);
     res.json({ msg: "ERROR" });
   }
+});
+
+app.use("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "index.html"));
 });
 
 app.listen(PORT, () => {
