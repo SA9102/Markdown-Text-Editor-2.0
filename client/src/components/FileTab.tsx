@@ -92,7 +92,7 @@ const FileTab = ({ file, selectedFileId, paddingLeft, onDelete, onToggleEdit, on
             </Text>
           )}
         </Group>
-        <FileEditOptions fileId={file.id} parentFolderIds={file.parentFolderIds} onEditName={onToggleEdit} onDelete={onDelete} />
+        {!file.isEditingName && <FileEditOptions fileId={file.id} parentFolderIds={file.parentFolderIds} onEditName={onToggleEdit} onDelete={onDelete} />}
       </Group>
       <Divider />
     </>
