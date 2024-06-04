@@ -1,3 +1,6 @@
+// Types
+import { onSelectFile } from "../types/crudFunctionsTypes";
+
 // Mantine
 import { ActionIcon, Button, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -5,7 +8,16 @@ import { useDisclosure } from "@mantine/hooks";
 // Tabler Icons
 import { IconFileTime } from "@tabler/icons-react";
 
-const SelectRecentFileButton = ({ recentFileTabs, onSelectFile }) => {
+type props = {
+  recentFileTabs: {
+    id: string;
+    name: string;
+    parentFolderIds: string[];
+  }[];
+  onSelectFile: onSelectFile;
+};
+
+const SelectRecentFileButton = ({ recentFileTabs, onSelectFile }: props) => {
   const [opened, { open, close }] = useDisclosure();
 
   return (

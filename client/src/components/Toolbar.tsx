@@ -13,6 +13,29 @@ import RegisterButton from "./RegisterButton";
 // Utils
 import iconStyle from "../utils/iconStyle";
 
+// Types
+import { onSelectFile } from "../types/crudFunctionsTypes";
+
+type props = {
+  editorOrViewer: string;
+  setEditorOrViewer: (param: string) => void;
+  recentFileTabs: {
+    id: string;
+    name: string;
+    parentFolderIds: string[];
+  }[];
+  onSelectFile: onSelectFile;
+  isLoggedIn: boolean;
+  setIsLoggedIn: (param: boolean) => void;
+  onSaveToState: () => void;
+  onSaveToDB: () => void;
+  onFetchFromDB: () => void;
+  onLogout: () => void;
+  canSaveToDB: boolean;
+  editorOnLargeScreen: boolean;
+  setEditorOnLargeScreen: (param: boolean) => void;
+};
+
 const Toolbar = ({
   editorOrViewer,
   setEditorOrViewer,
@@ -27,7 +50,7 @@ const Toolbar = ({
   canSaveToDB,
   editorOnLargeScreen,
   setEditorOnLargeScreen,
-}) => {
+}: props) => {
   const { colorScheme, setColorScheme } = useMantineColorScheme();
   const isMobile = useMediaQuery("(max-width:36em)");
 

@@ -9,17 +9,18 @@ import FileTab from "./FileTab";
 import FileAndFolderTreeType from "../types/FileAndFolderTreeType";
 import FolderType from "../types/FolderType";
 import FileType from "../types/FileType";
+import { onDelete, onToggleEdit, onUpdateName, onAdd, onToggleExpand, onSelectFile, onAddFileTab } from "../types/crudFunctionsTypes";
 
 type FileExplorerPanelProps = {
   data: FileAndFolderTreeType;
   selectedFileId: string | undefined;
-  onDelete: (arg0: string[], arg1: string, arg2: string) => void;
-  onToggleEdit: (arg0: string[], arg1: string) => void;
-  onUpdateName: (arg0: string[], arg1: string, arg2: string) => void;
-  onAddFileTab: (arg0: string, arg1: string, arg2: string[]) => void;
-  onAdd: (arg0: string[] | null, arg1: string | null, arg2: string) => void;
-  onToggleExpand: (arg0: string[], arg1: string) => void;
-  onSelectFile: (arg0: string, arg1: string[], arg2: string) => void;
+  onDelete: onDelete;
+  onToggleEdit: onToggleEdit;
+  onUpdateName: onUpdateName;
+  onAddFileTab: onAddFileTab;
+  onAdd: onAdd;
+  onToggleExpand: onToggleExpand;
+  onSelectFile: onSelectFile;
 };
 
 const isFolder = (item: FolderType | FileType): item is FolderType => {

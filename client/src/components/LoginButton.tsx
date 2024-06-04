@@ -15,7 +15,11 @@ import axios from "axios";
 // Utils
 import iconStyle from "../utils/iconStyle";
 
-const LoginButton = ({ setIsLoggedIn }) => {
+type props = {
+  setIsLoggedIn: (param: boolean) => void;
+};
+
+const LoginButton = ({ setIsLoggedIn }: props) => {
   const [opened, { open, close }] = useDisclosure(false);
 
   const [username, setUsername] = useState("");

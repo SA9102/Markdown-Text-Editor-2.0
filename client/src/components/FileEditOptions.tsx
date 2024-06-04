@@ -1,10 +1,20 @@
 // Mantine
 import { ActionIcon, Menu, rem } from "@mantine/core";
 
+// Types
+import { onToggleEdit, onDelete } from "../types/crudFunctionsTypes";
+
 // Tabler Icons
 import { IconDotsVertical, IconTrash, IconCursorText } from "@tabler/icons-react";
 
-const FileEditOptions = ({ fileId, parentFolderIds, onEditName, onDelete }) => {
+type props = {
+  fileId: string;
+  parentFolderIds: string[];
+  onEditName: onToggleEdit;
+  onDelete: onDelete;
+};
+
+const FileEditOptions = ({ fileId, parentFolderIds, onEditName, onDelete }: props) => {
   const iconStyle = { width: rem(16), height: rem(16) };
 
   return (

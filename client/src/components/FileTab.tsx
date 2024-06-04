@@ -4,6 +4,7 @@ import { useState } from "react";
 // Types
 import FileType from "../types/FileType";
 import FileEditOptions from "./FileEditOptions";
+import { onDelete, onToggleEdit, onUpdateName, onSelectFile, onAddFileTab } from "../types/crudFunctionsTypes";
 
 // Mantine
 import { Button, Divider, Group, Text, TextInput } from "@mantine/core";
@@ -12,11 +13,11 @@ type FileTabProps = {
   file: FileType;
   selectedFileId: string | undefined;
   paddingLeft: number;
-  onDelete: (arg0: string[], arg1: string, arg2: string) => void;
-  onToggleEdit: (arg0: string[], arg1: string) => void;
-  onUpdateName: (arg0: string[], arg1: string, arg2: string) => void;
-  onSelectFile: (arg0: string, arg1: string[], arg2: string) => void;
-  onAddFileTab: (arg0: string, arg1: string, arg2: string[]) => void;
+  onDelete: onDelete;
+  onToggleEdit: onToggleEdit;
+  onUpdateName: onUpdateName;
+  onSelectFile: onSelectFile;
+  onAddFileTab: onAddFileTab;
 };
 
 const FileTab = ({ file, selectedFileId, paddingLeft, onDelete, onToggleEdit, onAddFileTab, onUpdateName, onSelectFile }: FileTabProps) => {

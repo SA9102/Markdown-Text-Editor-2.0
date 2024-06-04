@@ -1,13 +1,25 @@
 // Mantine
 import { ActionIcon, Menu, rem } from "@mantine/core";
 
+// Types
+import { onToggleEdit, onAdd, onDelete, onToggleExpand } from "../types/crudFunctionsTypes";
+
 // Tabler Icons
 import { IconDotsVertical, IconFile, IconFolder, IconTrash, IconCursorText } from "@tabler/icons-react";
 
 // Utils
 import iconStyle from "../utils/iconStyle";
 
-const FolderEditOptions = ({ folderId, parentFolderIds, onEditName, onAddItem, onDelete, onToggleExpand }) => {
+type props = {
+  folderId: string;
+  parentFolderIds: string[];
+  onEditName: onToggleEdit;
+  onAddItem: onAdd;
+  onDelete: onDelete;
+  onToggleExpand: onToggleExpand;
+};
+
+const FolderEditOptions = ({ folderId, parentFolderIds, onEditName, onAddItem, onDelete, onToggleExpand }: props) => {
   return (
     <>
       <Menu>

@@ -43,7 +43,7 @@ type selectedFileType = {
   parentFolderIds: string[];
 };
 
-type EditedFilesType = [string, string[], string]; // id, parentFolderIds, body;
+type EditedFilesType = { id: string; parentFolderIds: string[]; body: string }; // id, parentFolderIds, body;
 
 type RecentFileTabType = {
   id: string;
@@ -108,7 +108,7 @@ const MainPage = () => {
   }, [isLoggedIn]);
 
   useEffect(() => {
-    const beforeUnload = (e) => {
+    const beforeUnload = (e: any) => {
       e.preventDefault();
       // alert("Are you sure?");
     };
@@ -204,10 +204,13 @@ const MainPage = () => {
           console.log(action.payload.newItemName);
           draft.name = action.payload.newItemName;
           draft.isEditingName = false;
-          // if (!action.payload.newlyCreated) {
-          if (action.payload.targetItemId === selectedFile?.id) {
-            setSelectedFile({ ...selectedFile, name: action.payload.newItemName });
+
+          if (selectedFile !== null) {
+            if (action.payload.targetItemId === selectedFile.id) {
+              setSelectedFile({ ...selectedFile, name: action.payload.newItemName });
+            }
           }
+
           // }
           break;
 
@@ -241,7 +244,7 @@ const MainPage = () => {
           if (action.payload.itemType === "Folder") {
             setEditedFiles(
               editedFiles.filter((fileData: EditedFilesType) => {
-                if (!fileData[1].includes(action.payload.targetItemId)) {
+                if (!fileData.parentFolderIds.includes(action.payload.targetItemId)) {
                   return fileData;
                 }
               })
@@ -264,7 +267,7 @@ const MainPage = () => {
           } else if (action.payload.itemType === "File") {
             setEditedFiles(
               editedFiles.filter((fileData: EditedFilesType) => {
-                if (fileData[0] !== action.payload.targetItemId) {
+                if (fileData.id !== action.payload.targetItemId) {
                   return fileData;
                 }
               })
@@ -388,8 +391,8 @@ const MainPage = () => {
     if (selectedFile !== null) {
       let editedFilesCopy = [...editedFiles];
       editedFilesCopy = editedFilesCopy.map((fileData) => {
-        if (fileData[0] === selectedFile?.id) {
-          fileData[2] = textEditor;
+        if (fileData.id === selectedFile?.id) {
+          fileData.body = textEditor;
         }
         return fileData;
       });
@@ -400,8 +403,8 @@ const MainPage = () => {
     // Check if the newly selected file is in 'editedFiles' so that we can retrieve the contents quicker.
     let found = false;
     for (let fileData of editedFiles) {
-      if (fileData[0] === id) {
-        nextFileBody = fileData[2];
+      if (fileData.id === id) {
+        nextFileBody = fileData.body;
         found = true;
         break;
       }
@@ -415,9 +418,9 @@ const MainPage = () => {
         d = d.find((folder: FolderType) => folder.id === parentFolderIds[i]).items;
       }
       const nextFile = d.find((item: FolderType | FileType) => item.id === id);
-      const newFileArray: EditedFilesType = [id, parentFolderIds, nextFile.body];
+      const newFileObj: EditedFilesType = { id, parentFolderIds, body: nextFile.body };
       nextFileBody = nextFile.body;
-      setEditedFiles([...editedFiles, newFileArray]);
+      setEditedFiles([...editedFiles, newFileObj]);
     }
 
     found = false;
@@ -471,8 +474,8 @@ const MainPage = () => {
     if (selectedFile) {
       console.log("THERE IS A SELECTED FILE");
       editedFilesCopy = editedFiles.map((fileData) => {
-        if (fileData[0] === selectedFile.id) {
-          fileData[2] = textEditor;
+        if (fileData.id === selectedFile.id) {
+          fileData.body = textEditor;
         }
         return fileData;
       });
@@ -481,7 +484,7 @@ const MainPage = () => {
     }
 
     for (let fileData of editedFilesCopy) {
-      dispatch({ type: ACTIONS.UPDATE_FILE_BODY, payload: { targetItemId: fileData[0], idChain: fileData[1], targetItemBody: fileData[2] } });
+      dispatch({ type: ACTIONS.UPDATE_FILE_BODY, payload: { targetItemId: fileData.id, idChain: fileData.parentFolderIds, targetItemBody: fileData.body } });
     }
     setCanSaveToDB(true);
     notifications.show({

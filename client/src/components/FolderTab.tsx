@@ -7,6 +7,7 @@ import FileTab from "./FileTab";
 // Types
 import FolderType from "../types/FolderType";
 import FileType from "../types/FileType";
+import { onDelete, onToggleEdit, onUpdateName, onAdd, onToggleExpand, onSelectFile, onAddFileTab } from "../types/crudFunctionsTypes";
 
 // Mantine
 import { Group, TextInput, Text, Button, Divider } from "@mantine/core";
@@ -20,13 +21,13 @@ type FolderTabProps = {
   folder: FolderType;
   selectedFileId: string | undefined;
   paddingLeft: number;
-  onDelete: (arg0: string[], arg1: string, arg2: string) => void;
-  onToggleEdit: (arg0: string[], arg1: string) => void;
-  onUpdateName: (arg0: string[], arg1: string, arg2: string) => void;
-  onAdd: (arg0: string[], arg1: string, arg2: string) => void;
-  onToggleExpand: (arg0: string[], arg1: string, arg2: boolean) => void;
-  onSelectFile: (arg0: string, arg1: string[], arg2: string) => void;
-  onAddFileTab: (arg0: string, arg1: string, arg2: string[]) => void;
+  onDelete: onDelete;
+  onToggleEdit: onToggleEdit;
+  onUpdateName: onUpdateName;
+  onAdd: onAdd;
+  onToggleExpand: onToggleExpand;
+  onSelectFile: onSelectFile;
+  onAddFileTab: onAddFileTab;
 };
 
 const isFolder = (item: FolderType | FileType): item is FolderType => {
